@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Confirme seu pagamento</h2>
+<p><strong>Empresa:</strong> {{ dados.empresa }}</p>
+<p><strong>CNPJ:</strong> {{ dados.cnpj }}</p>
+<p><strong>Usuário:</strong> {{ dados.username }}</p>
+<p><strong>E-mail:</strong> {{ dados.email }}</p>
+<p><strong>Plano:</strong> {{ dados.plano }}</p>
+
+<form method="post">
+  <!-- Campos ocultos para passar os dados -->
+  <input type="hidden" name="empresa" value="{{ dados.empresa }}">
+  <input type="hidden" name="cnpj" value="{{ dados.cnpj }}">
+  <input type="hidden" name="username" value="{{ dados.username }}">
+  <input type="hidden" name="email" value="{{ dados.email }}">
+  <input type="hidden" name="senha" value="{{ dados.password or '' }}">
+  <input type="hidden" name="plano" value="{{ dados.plano }}">
+
+  <button type="submit">Confirmar Pagamento</button>
+</form>
+{% endblock %}

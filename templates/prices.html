@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Preços e Custos - Agenda{% endblock %}
+
+{% block header %}Gerenciar Serviços{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <h3>Adicionar novo serviço</h3>
+  <label for="name">Nome do serviço</label>
+  <input type="text" name="name" id="name" required />
+
+  <label for="price">Preço (R$)</label>
+  <input type="number" step="0.01" name="price" id="price" required />
+
+  <label for="cost">Custo (R$)</label>
+  <input type="number" step="0.01" name="cost" id="cost" required />
+
+  <button type="submit" name="add">Adicionar Serviço</button>
+</form>
+
+<h3>Serviços cadastrados</h3>
+<table>
+  <thead>
+    <tr><th>Nome</th><th>Preço (R$)</th><th>Custo (R$)</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for service in services %}
+    <tr>
+      <form method="post">
+        <td>{{ service.name }}</td>
+        <td>
+          <input type="number" step="0.01" name="price" value="{{ "%.2f"|format(service.price) }}" />
+        </td>
+        <td>
+          <input type="number" step="0.01" name="cost" value="{{ "%.2f"|format(service.cost) }}" />
+        </td>
+        <td>
+          <input type="hidden" name="service_id" value="{{ service.id }}" />
+          <button type="submit" name="update">Salvar</button>
+        </td>
+      </form>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">Nenhum serviço cadastrado</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

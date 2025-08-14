@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Usuários Cadastrados - Agenda{% endblock %}
+
+{% block header %}Usuários Cadastrados{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<table>
+  <thead>
+    <tr><th>ID</th><th>Usuário</th></tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.username }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="2">Nenhum usuário cadastrado</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

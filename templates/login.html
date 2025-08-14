@@ -1,0 +1,45 @@
+
+{% extends "base.html" %}
+
+{% block title %}Login - Agenda{% endblock %}
+
+{% block header %}Acessar Conta{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <label for="username">CNPJ ou Nome da Empresa</label>
+  <input type="text" name="username" id="username" required autofocus />
+
+  <label for="password">Senha</label>
+  <input type="password" name="password" id="password" required />
+
+  <button type="submit">Entrar</button>
+</form>
+<p>Não tem conta? <a href="{{ url_for('auth.register') }}">Cadastre-se</a></p>
+
+
+
+<footer style="margin-top: 40px; font-size: 14px; color: #555;">
+  <p><strong>O Agenda de Salão</strong> é o aplicativo ideal para cabeleireiros, manicures e esteticistas que desejam organizar seus horários e clientes.</p>
+
+  <p><strong>Recursos:</strong></p>
+  <ul>
+    <li>Cadastro de clientes com nome, telefone e histórico de atendimento</li>
+    <li>Agenda diária, semanal e mensal</li>
+    <li>Notificações de lembrete para clientes e profissionais</li>
+    <li>Relatórios de serviços e faturamento</li>
+  </ul>
+
+  <p><strong>Benefícios:</strong></p>
+  <ul>
+    <li>Reduza faltas com lembretes automáticos</li>
+    <li>Organize sua rotina e atenda mais clientes</li>
+    <li>Tudo salvo com segurança no seu dispositivo</li>
+  </ul>
+</footer>
+{% endblock %}
+    

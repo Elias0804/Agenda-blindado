@@ -1,0 +1,14 @@
+/* Exemplo simples para estilizar o dashboard */
+
+h2 {
+  color: #004080;
+  margin-top: 1.5rem;
+}
+
+table {
+  background-color: #f9f9f9;
+}
+
+td, th {
+  padding: 8px 12px;
+}

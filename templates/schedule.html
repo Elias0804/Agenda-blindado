@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Agendamentos - Agenda{% endblock %}
+
+{% block header %}Agendamento de Horário{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <label for="client_id">Cliente</label>
+  <select name="client_id" id="client_id" required>
+    <option value="">Selecione um cliente</option>
+    {% for client in clients %}
+    <option value="{{ client.id }}">{{ client.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="date_time">Data e Hora (YYYY-MM-DD HH:MM)</label>
+  <input type="text" name="date_time" id="date_time" placeholder="2025-08-10 15:30" required />
+
+  <label for="service_id">Serviço</label>
+  <select name="service_id" id="service_id" required>
+    <option value="">Selecione um serviço</option>
+    {% for service in services %}
+    <option value="{{ service.id }}">{{ service.name }} - R$ {{ "%.2f"|format(service.price) }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="notes">Observações</label>
+  <textarea name="notes" id="notes"></textarea>
+
+  <button type="submit">Agendar</button>
+</form>
+
+<h2>Agendamentos</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Cliente</th>
+      <th>Data e Hora</th>
+      <th>Serviço</th>
+      <th>Preço (R$)</th>
+      <th>Custo (R$)</th>
+      <th>Observações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sched in schedules %}
+    <tr>
+      <td>{{ sched.client_name }}</td>
+      <td>{{ sched.date_time.replace("T"," ") if sched.date_time else "" }}</td>
+      <td>{{ sched.service_name }}</td>
+      <td>{{ "%.2f"|format(sched.price) }}</td>
+      <td>{{ "%.2f"|format(sched.cost) }}</td>
+      <td>{{ sched.notes }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">Nenhum agendamento</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

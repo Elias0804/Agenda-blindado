@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+<style>
+  .planos {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .plano {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    flex: 1;
+    text-align: center;
+    background: #f9f9f9;
+    transition: 0.3s;
+  }
+  .plano:hover {
+    border-color: #007bff;
+    background: #eef6ff;
+  }
+  .plano h3 {
+    margin-bottom: 10px;
+    color: #007bff;
+  }
+  .plano button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .plano button:hover {
+    background: #0056b3;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Cadastro e Escolha de Plano</h2>
+
+<form method="post" action="{{ url_for('pagar') }}">
+  <label>Nome da Empresa</label>
+  <input name="empresa" required>
+
+  <label>CNPJ</label>
+  <input name="cnpj" required pattern="\d{14}" title="Digite apenas números do CNPJ (14 dígitos)">
+
+  <label>Usuário</label>
+  <input name="username" required>
+
+  <label>Senha</label>
+  <input name="password" type="password" required>
+
+  <label>E-mail</label>
+  <input name="email" type="email" required>
+
+  <h3>Escolha seu plano</h3>
+  <div class="planos">
+    <div class="plano">
+      <h3>Básico</h3>
+      <p>R$ 29,90/mês</p>
+      <p>Até 50 clientes cadastrados</p>
+      <button type="submit" name="plano" value="basico">Selecionar</button>
+    </div>
+    <div class="plano">
+      <h3>Profissional</h3>
+      <p>R$ 59,90/mês</p>
+      <p>Clientes ilimitados + Relatórios</p>
+      <button type="submit" name="plano" value="profissional">Selecionar</button>
+    </div>
+    <div class="plano">
+      <h3>Premium</h3>
+      <p>Todos recursos + Suporte VIP</p>
+      <button type="submit" name="plano" value="premium">Selecionar</button>
+    </div>
+    <div class="plano">
+      <h3>Avista</h3>
+      <p>R$ 120,00 → <strong>R$ 118,00</strong> (10% de desconto)</p>
+      <button type="submit" name="plano" value="avista">Selecionar</button>
+    </div>
+    <div class="plano">
+      <h3>Parcelado</h3>
+      <p>R$ 120,00 → <strong>R$ 110,00</strong> (5% de juros)</p>
+      <button type="submit" name="plano" value="parcelado">Selecionar</button>
+    </div>
+  </div>
+</form>
+
+<footer style="margin-top: 40px; font-size: 14px; color: #555;">
+  <p><strong>O Agenda de Salão</strong> é o aplicativo ideal para Salão de beleza, manicures e esteticistas que desejam organizar seus horários e clientes.</p>
+
+  <p><strong>Recursos:</strong></p>
+  <ul>
+    <li>Cadastro de clientes com nome, telefone e histórico de atendimento</li>
+    <li>Agenda diária, semanal e mensal</li>
+    <li>Notificações de lembrete para clientes e profissionais</li>
+    <li>Relatórios de serviços e faturamento</li>
+  </ul>
+
+  <p><strong>Benefícios:</strong></p>
+  <ul>
+    <li>Reduza faltas com lembretes automáticos</li>
+    <li>Organize sua rotina e atenda mais clientes</li>
+    <li>Tudo salvo com segurança no seu dispositivo</li>
+  </ul>
+</footer>
+{% endblock %}

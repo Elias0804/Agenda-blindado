@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Agenda{% endblock %}
+
+{% block header %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<p>Bem-vindo, {{ session.get('user') }}!</p>
+
+<ul>
+  <li><strong>Total de clientes:</strong> {{ clients_count }}</li>
+  <li><strong>Total de agendamentos:</strong> {{ sched_count }}</li>
+</ul>
+
+<h2>Serviços cadastrados</h2>
+<table>
+  <thead>
+    <tr><th>Serviço</th><th>Preço (R$)</th><th>Custo (R$)</th></tr>
+  </thead>
+  <tbody>
+    {% for service in services %}
+    <tr>
+      <td>{{ service.name }}</td>
+      <td>{{ "%.2f"|format(service.price) }}</td>
+      <td>{{ "%.2f"|format(service.cost) }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3">Nenhum serviço cadastrado</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

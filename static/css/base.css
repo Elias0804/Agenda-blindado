@@ -1,0 +1,59 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+input, select, textarea {
+  display: block;
+  margin: 0.5rem 0 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+label {
+  font-weight: bold;
+}
+
+nav a {
+  margin-right: 1rem;
+  text-decoration: none;
+  color: #007BFF;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.flash {
+  color: darkred;
+  margin-bottom: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: #007BFF;
+  border: none;
+  color: white;
+  border-radius: 3px;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

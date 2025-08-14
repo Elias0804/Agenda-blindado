@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Agenda de Salão{% endblock %}</title>
+  
+  <!-- CSS estático padrão -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  {% block extra_css %}{% endblock %}
+  
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; padding: 1rem; }
+    input, select, textarea { display: block; margin: .5rem 0 1rem; padding: .5rem; width: 100%; max-width: 400px; }
+    label { font-weight: bold; }
+    nav a { margin-right: 1rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: .5rem; }
+    .flash { color: darkred; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      {% if session.get('user') %}
+        <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('clients.clients') }}">Clientes</a>
+        <a href="{{ url_for('schedules.schedule') }}">Agendamentos</a>
+        <a href="{{ url_for('services.prices') }}">Preços</a>
+        <a href="{{ url_for('export.export_excel') }}">Exportar planilha</a>
+        <a href="{{ url_for('auth.list_users') }}">Usuários</a>
+        <a href="{{ url_for('auth.logout') }}">Sair ({{ session.get('user') }})</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.register') }}">Cadastrar</a>
+      {% endif %}
+    </nav>
+    <h1>{% block header %}Agenda de Salão{% endblock %}</h1>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash">
+        {% for m in messages %}{{ m }}<br>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; {{ 2025 }} Agenda de Salão</p>
+  </footer>
+</body>
+</html>
