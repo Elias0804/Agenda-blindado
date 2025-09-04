@@ -1,0 +1,160 @@
+/* ================================
+   Estilo geral do formulário
+   ================================ */
+.agendamento-form {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.agendamento-form h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.agendamento-form label {
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.agendamento-form input,
+.agendamento-form select,
+.agendamento-form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.agendamento-form button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.agendamento-form button:hover {
+  background-color: #45a049;
+}
+
+/* ================================
+   Agrupa data e hora lado a lado
+   ================================ */
+.datetime-group {
+  display: flex;
+  gap: 10px;
+}
+
+.datetime-group input {
+  flex: 1;
+}
+
+/* ================================
+   Tabela de agendamentos
+   ================================ */
+.agendamentos-tabela table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.agendamentos-tabela th,
+.agendamentos-tabela td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.agendamentos-tabela th {
+  background-color: #f2f2f2;
+}
+
+/* ================================
+   Botões de ações na tabela
+   ================================ */
+.btn-edit,
+.btn-delete,
+.btn-download {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-right: 5px;
+  transition: 0.3s;
+  color: white;
+}
+
+.btn-edit {
+  background-color: #2196F3;
+}
+
+.btn-edit:hover {
+  background-color: #1976D2;
+}
+
+.btn-delete {
+  background-color: #f44336;
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f;
+}
+
+.btn-download {
+  background-color: #FF9800;
+  margin-top: 1rem;
+}
+
+.btn-download:hover {
+  background-color: #fb8c00;
+}
+
+/* ================================
+   Resumo do dia e resumo por profissional
+   ================================ */
+.summary-box {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+.summary-box h3 {
+  margin-top: 0;
+}
+
+.summary-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.summary-box th,
+.summary-box td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.summary-box th {
+  background-color: #f2f2f2;
+}
+
+/* ================================
+   Área do botão de download
+   ================================ */
+.download-weekly {
+  margin-top: 1rem;
+}

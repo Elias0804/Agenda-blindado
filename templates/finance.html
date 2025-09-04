@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Financeiro - Agenda{% endblock %}
+{% block header %}Resumo Financeiro{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/finance.css') }}">
+<style>
+  .date-filter { margin-bottom: 20px; }
+  .date-filter input { padding: 5px; margin-right: 10px; }
+  .summary-box { margin-bottom: 30px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="financeiro">
+  <!-- Barra de filtro por data -->
+  <form method="get" class="date-filter">
+    <label>Data inicial:</label>
+    <input type="date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+    <label>Data final:</label>
+    <input type="date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+    <button type="submit">Filtrar</button>
+    <a href="{{ url_for('finance_bp.summary') }}">Limpar filtro</a>
+  </form>
+
+  <!-- Se houver pesquisa por período -->
+  {% if filtered_summary %}
+  <div class="summary-box" style="background-color:#f0f8ff;">
+    <h3>Resultado da Pesquisa</h3>
+    <p>Período: <strong>{{ start_date or 'início' }} até {{ end_date or 'agora' }}</strong></p>
+    <p>Total de serviços realizados: <strong>{{ filtered_summary.total_services }}</strong></p>
+    <p>Receita total: <strong>R$ {{ "%.2f"|format(filtered_summary.total_price) }}</strong></p>
+
+    <h4>Resumo por Profissional</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Profissional</th>
+          <th>Total de Serviços</th>
+          <th>Total Recebido (R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in filtered_by_professional %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>{{ p.total_services }}</td>
+          <td>{{ "%.2f"|format(p.total_price) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">Nenhum serviço realizado neste período</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Resumo Geral -->
+  <div class="summary-box">
+    <h3>Resumo Geral</h3>
+    <p>Total de serviços realizados: <strong>{{ total_summary.total_services }}</strong></p>
+    <p>Receita total: <strong>R$ {{ "%.2f"|format(total_summary.total_price) }}</strong></p>
+    <p>Período: <strong>{{ start_date or 'início' }} até {{ end_date or 'agora' }}</strong></p>
+  </div>
+
+  <!-- Resumo por Profissional -->
+  <div class="summary-box">
+    <h3>Resumo por Profissional</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Profissional</th>
+          <th>Total de Serviços</th>
+          <th>Total Recebido (R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in summary_by_professional %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>{{ p.total_services }}</td>
+          <td>{{ "%.2f"|format(p.total_price) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">Nenhum serviço realizado no período</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Hoje -->
+  <div class="summary-box">
+    <h3>Hoje</h3>
+    <p>Total de serviços: {{ daily_summary.total_services }}</p>
+    <p>Receita: R$ {{ "%.2f"|format(daily_summary.total_price) }}</p>
+  </div>
+
+  <!-- Esta Semana -->
+  <div class="summary-box">
+    <h3>Esta Semana</h3>
+    <p>Total de serviços: {{ weekly_summary.total_services }}</p>
+    <p>Receita: R$ {{ "%.2f"|format(weekly_summary.total_price) }}</p>
+  </div>
+
+</section>
+{% endblock %}

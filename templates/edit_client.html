@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cliente{% endblock %}
+
+{% block content %}
+<h2>Editar Cliente</h2>
+
+<form method="post" class="form-edit">
+  <label for="name">Nome</label>
+  <input id="name" name="name" value="{{ client.name }}" required>
+
+  <label for="phone">Telefone</label>
+  <input id="phone" name="phone" value="{{ client.phone }}" required>
+
+  <button type="submit" class="btn-save">Salvar</button>
+</form>
+
+<style>
+  .form-edit {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .form-edit label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  .form-edit input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .btn-save {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #4a90e2;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .btn-save:hover {
+    background: #357ABD;
+  }
+</style>
+{% endblock %}

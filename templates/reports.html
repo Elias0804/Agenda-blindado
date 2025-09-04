@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - Agenda{% endblock %}
+{% block header %}Relatórios e Análises{% endblock %}
+
+{% block content %}
+<div class="reports">
+  <h3>Indicadores Gerais</h3>
+  <ul>
+    <li>Total de clientes: {{ stats.total_clients }}</li>
+    <li>Total de profissionais: {{ stats.total_professionals }}</li>
+    <li>Total de agendamentos: {{ stats.total_schedules }}</li>
+    <li>Receita acumulada: R$ {{ stats.total_revenue }}</li>
+  </ul>
+
+  <h3>Relatórios Detalhados</h3>
+  <ul>
+    <li><a href="{{ url_for('reports.schedules_report') }}">📅 Relatório de Agendamentos</a></li>
+    <li><a href="{{ url_for('reports.finance_report') }}">💰 Relatório Financeiro</a></li>
+    <li><a href="{{ url_for('reports.clients_report') }}">👥 Relatório de Clientes</a></li>
+    <li><a href="{{ url_for('reports.services_report') }}">🛠 Relatório de Serviços</a></li>
+  </ul>
+</div>
+{% endblock %}

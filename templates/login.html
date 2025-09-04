@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Login - Agenda{% endblock %}
@@ -6,11 +5,11 @@
 {% block header %}Acessar Conta{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 {% endblock %}
 
 {% block content %}
-<form method="post">
+<form method="post" action="{{ url_for('auth.login') }}">
   <label for="username">CNPJ ou Nome da Empresa</label>
   <input type="text" name="username" id="username" required autofocus />
 
@@ -19,9 +18,8 @@
 
   <button type="submit">Entrar</button>
 </form>
+
 <p>Não tem conta? <a href="{{ url_for('auth.register') }}">Cadastre-se</a></p>
-
-
 
 <footer style="margin-top: 40px; font-size: 14px; color: #555;">
   <p><strong>O Agenda de Salão</strong> é o aplicativo ideal para cabeleireiros, manicures e esteticistas que desejam organizar seus horários e clientes.</p>
@@ -42,4 +40,3 @@
   </ul>
 </footer>
 {% endblock %}
-    

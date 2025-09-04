@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Serviços & Promoções - Salão{% endblock %}
+{% block header %}Gerenciar Serviços do Salão{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="section">
+  <h3>Adicionar Novo Serviço</h3>
+  <form method="post" class="service-form">
+    <input type="text" name="name" placeholder="Nome do serviço" required>
+    <select name="category" required>
+      <option value="Cabelo">Cabelo</option>
+      <option value="Unhas">Unhas</option>
+      <option value="Estética">Estética</option>
+      <option value="Maquiagem">Maquiagem</option>
+      <option value="Depilação">Depilação</option>
+      <option value="Massagem">Massagem</option>
+    </select>
+    <input type="number" step="0.01" name="price" placeholder="Preço (R$)" required>
+    <input type="number" name="duration" placeholder="Duração (min)" required>
+    <button type="submit" name="add" class="btn btn-add">Adicionar</button>
+  </form>
+</div>
+
+<div class="section">
+  <h3>Serviços Cadastrados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Categoria</th>
+        <th>Preço (R$)</th>
+        <th>Duração</th>
+        <th>Promoção</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in services %}
+      <tr {% if s.promotion %}class="promotion-row"{% endif %}>
+        <form method="post" class="inline-form">
+          <td><input type="text" name="name" value="{{ s.name }}" required></td>
+          <td>
+            <select name="category" required>
+              {% for cat in ['Cabelo','Unhas','Estética','Maquiagem','Depilação','Massagem'] %}
+                <option value="{{ cat }}" {% if cat == s.category %}selected{% endif %}>{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td><input type="number" step="0.01" name="price" value="{{ "%.2f"|format(s.price) }}" required></td>
+          <td><input type="number" name="duration" value="{{ s.duration }}" required></td>
+          <td><input type="checkbox" name="promotion" value="1" {% if s.promotion %}checked{% endif %}></td>
+          <td>
+            <input type="hidden" name="service_id" value="{{ s.id }}">
+            <button type="submit" name="update" class="btn btn-update">Salvar</button>
+        </form>
+        <form method="post" class="inline-form" onsubmit="return confirm('Deseja excluir este serviço?')">
+          <input type="hidden" name="service_id" value="{{ s.id }}">
+          <button type="submit" name="delete" class="btn btn-delete">Excluir</button>
+        </form>
+          </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">Nenhum serviço cadastrado</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h3>Promoções Ativas</h3>
+  {% set promo_services = services | selectattr('promotion') | list %}
+  {% if promo_services %}
+  <ul>
+    {% for s in promo_services %}
+      <li>{{ s.name }} ({{ s.category }}) - R$ {{ "%.2f"|format(s.price) }} - {{ s.duration }} min</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>Nenhum serviço em promoção no momento.</p>
+  {% endif %}
+</div>
+
+<form method="post" onsubmit="return confirm('Tem certeza que deseja excluir TODOS os serviços?')">
+  <button type="submit" name="clear_all" class="btn btn-clear">Excluir Todos</button>
+</form>
+
+{% endblock %}

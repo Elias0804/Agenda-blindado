@@ -1,0 +1,88 @@
+/* finance.css */
+
+/* Estrutura principal */
+.financeiro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 30px;
+  padding: 20px;
+}
+
+/* Caixas de resumo */
+.summary-box {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.summary-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.summary-box h3 {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 18px;
+  text-align: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+}
+
+.summary-box p {
+  font-size: 1.2rem;
+  margin: 12px 0;
+  color: #555;
+}
+
+.summary-box strong {
+  font-size: 1.4rem;
+  color: #27ae60;
+}
+
+/* Tabelas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+}
+
+thead {
+  background: #3498db;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+thead th {
+  padding: 14px;
+}
+
+tbody td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+tbody tr:hover {
+  background: #ecf7ff;
+}
+
+tbody td:last-child {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .financeiro {
+    grid-template-columns: 1fr;
+  }
+}

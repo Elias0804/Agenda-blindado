@@ -5,19 +5,19 @@
 {% block header %}Cadastro de Clientes{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/clients.css') }}">
 {% endblock %}
 
 {% block content %}
+<h2>Cadastro de Clientes</h2>
 <form method="post">
-  <label for="name">Nome</label>
-  <input type="text" name="name" id="name" required />
+  <input type="hidden" name="form_type" value="client">
+  
+  <label for="client_name">Nome</label>
+  <input type="text" name="name" id="client_name" required />
 
   <label for="phone">Telefone</label>
   <input type="text" name="phone" id="phone" />
-
-  <label for="email">Email</label>
-  <input type="email" name="email" id="email" />
 
   <label for="notes">Observações</label>
   <textarea name="notes" id="notes"></textarea>
@@ -25,23 +25,30 @@
   <button type="submit">Cadastrar Cliente</button>
 </form>
 
-<h2>Clientes cadastrados</h2>
+<h3>Clientes cadastrados</h3>
 <table>
   <thead>
-    <tr><th>Nome</th><th>Telefone</th><th>Email</th><th>Observações</th></tr>
+    <tr>
+      <th>Nome</th>
+      <th>Telefone</th>
+      <th>Observações</th>
+      <th>Ações</th>
+    </tr>
   </thead>
   <tbody>
     {% for client in all_clients %}
     <tr>
       <td>{{ client.name }}</td>
       <td>{{ client.phone }}</td>
-      <td>{{ client.email }}</td>
       <td>{{ client.notes }}</td>
+      <td>
+        <a href="{{ url_for('clients.edit_client', client_id=client.id) }}" class="btn-edit">Editar</a>
+        <a href="{{ url_for('clients.delete_client', client_id=client.id) }}" class="btn-delete" onclick="return confirm('Deseja realmente excluir este cliente?');">Excluir</a>
+      </td>
     </tr>
     {% else %}
     <tr><td colspan="4">Nenhum cliente cadastrado</td></tr>
     {% endfor %}
   </tbody>
 </table>
-
 {% endblock %}

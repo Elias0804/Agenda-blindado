@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Item - Inventário{% endblock %}
+{% block header %}Adicionar Novo Item{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/inventory.css') }}">
+<style>
+  .form-container {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fafafa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .form-container label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  .form-container input, 
+  .form-container select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+  .form-container button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .form-container button:hover {
+    background-color: #45a049;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <form method="POST" action="{{ url_for('inventory.add_item') }}">
+    <label for="name">Nome do Item</label>
+    <input type="text" name="name" id="name" placeholder="Ex: Tesoura profissional" required>
+
+    <label for="category">Categoria</label>
+    <select name="category" id="category" required>
+      <option value="Cabelo">Cabelo</option>
+      <option value="Unhas">Unhas</option>
+      <option value="Estética">Estética</option>
+      <option value="Maquiagem">Maquiagem</option>
+      <option value="Depilação">Depilação</option>
+      <option value="Massagem">Massagem</option>
+      <option value="Outros">Outros</option>
+    </select>
+
+    <label for="quantity">Quantidade</label>
+    <input type="number" name="quantity" id="quantity" min="1" value="1" required>
+
+    <label for="price">Preço (R$)</label>
+    <input type="number" name="price" id="price" step="0.01" placeholder="Ex: 50.00" required>
+
+    <button type="submit">Adicionar Item</button>
+  </form>
+</div>
+{% endblock %}

@@ -11,16 +11,23 @@
 {% block content %}
 <table>
   <thead>
-    <tr><th>ID</th><th>Usuário</th></tr>
+    <tr><th>ID</th><th>Usuário</th><th>Ações</th></tr>
   </thead>
   <tbody>
     {% for user in users %}
     <tr>
       <td>{{ user.id }}</td>
       <td>{{ user.username }}</td>
+      <td>
+        <form method="post" action="{{ url_for('auth.delete_user', user_id=user.id) }}" style="display:inline;">
+          <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
+            Excluir
+          </button>
+        </form>
+      </td>
     </tr>
     {% else %}
-    <tr><td colspan="2">Nenhum usuário cadastrado</td></tr>
+    <tr><td colspan="3">Nenhum usuário cadastrado</td></tr>
     {% endfor %}
   </tbody>
 </table>

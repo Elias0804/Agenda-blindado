@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Agendamentos - Agenda{% endblock %}
+
+{% block header %}Agendamento de Horário{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/agendamentos.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="agendamento-form">
+  <form method="post">
+    <h2>Novo Agendamento</h2>
+
+    <label for="client_id">Cliente</label>
+    <select name="client_id" id="client_id" required>
+      <option value="">Selecione um cliente</option>
+      {% for client in clients %}
+      <option value="{{ client.id }}">{{ client.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="professional_id">Profissional</label>
+    <select name="professional_id" id="professional_id" required>
+      <option value="">Selecione um profissional</option>
+      {% for professional in professionals %}
+      <option value="{{ professional.id }}">{{ professional.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Data e Hora do Atendimento</label>
+    <div class="datetime-group">
+      <input type="date" name="date" required>
+      <input type="time" name="time" required>
+    </div>
+
+    <label for="service_id">Serviço</label>
+    <select name="service_id" id="service_id" required>
+      <option value="">Selecione um serviço</option>
+      {% for service in services %}
+      <option value="{{ service.id }}">{{ service.name }} - R$ {{ "%.2f"|format(service.price or 0) }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="notes">Observações</label>
+    <textarea name="notes" id="notes" placeholder="Digite alguma observação (opcional)"></textarea>
+
+    <button type="submit" class="btn-submit">Agendar</button>
+  </form>
+</section>
+
+<section class="agendamentos-tabela">
+  <h2>Agendamentos</h2>
+
+  <!-- Pesquisa por data -->
+  <form method="get" class="search-date-form">
+    <label for="filter_date">Filtrar por data:</label>
+    <input type="date" name="filter_date" id="filter_date" value="{{ filter_date }}">
+    <button type="submit" class="btn-filter">Pesquisar</button>
+    <a href="{{ url_for('schedules.schedule') }}" class="btn-reset">Limpar</a>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Profissional</th>
+        <th>Data</th>
+        <th>Hora</th>
+        <th>Serviço</th>
+        <th>Preço (R$)</th>
+        <th>Observações</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sched in schedules %}
+      <tr>
+        <td>{{ sched.client_name }}</td>
+        <td>{{ sched.professional_name }}</td>
+        <td>{{ sched.date_time.split(' ')[0] if sched.date_time else '' }}</td>
+        <td>{{ sched.date_time.split(' ')[1] if sched.date_time else '' }}</td>
+        <td>{{ sched.service_name }}</td>
+        <td>{{ "%.2f"|format(sched.price or 0) }}</td>
+        <td>{{ sched.notes }}</td>
+        <td>
+          <a href="{{ url_for('schedules.edit_schedule', schedule_id=sched.id) }}" class="btn-edit">Editar</a>
+          <form method="post" action="{{ url_for('schedules.delete_schedule', schedule_id=sched.id) }}" style="display:inline;">
+            <button type="submit" class="btn-delete" onclick="return confirm('Deseja realmente excluir este agendamento?');">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8">Nenhum agendamento</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="download-buttons">
+    <a href="{{ url_for('schedules.download_weekly_schedule') }}" class="btn-download">Baixar Agendamento Semanal</a>
+    <a href="{{ url_for('schedules.download_all_schedule') }}" class="btn-download">Baixar Todos os Agendamentos</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Profissionais - Agenda{% endblock %}
+
+{% block header %}Cadastro de Profissionais{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/professionals.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2>Cadastro de Profissionais</h2>
+<form method="post">
+  <input type="hidden" name="form_type" value="professionals">
+  
+  <label for="prof_name">Nome</label>
+  <input type="text" name="name" id="prof_name" required />
+
+  <label for="prof_phone">Telefone</label>
+  <input type="text" name="phone" id="prof_phone" />
+
+  <label for="specialty">Especialidade</label>
+  <input type="text" name="specialty" id="specialty" />
+
+  <button type="submit">Cadastrar Profissional</button>
+</form>
+
+<h3>Profissionais cadastrados</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Telefone</th>
+      <th>Especialidade</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for prof in all_pros %}
+    <tr>
+      <td>{{ prof.name }}</td>
+      <td>{{ prof.phone }}</td>
+      <td>{{ prof.specialty }}</td>
+      <td>
+        <!-- Corrigido: endpoint plural correto -->
+        <a href="{{ url_for('professionals.edit_professionals', prof_id=prof.id) }}" class="btn-edit">Editar</a>
+        <a href="{{ url_for('professionals.delete_professionals', prof_id=prof.id) }}" class="btn-delete" onclick="return confirm('Deseja realmente excluir este profissional?');">Excluir</a>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">Nenhum profissional cadastrado</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

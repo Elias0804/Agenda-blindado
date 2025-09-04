@@ -1,36 +1,123 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Agenda{% endblock %}
+{% block title %}Painel de Controle - Agenda de Salão{% endblock %}
 
-{% block header %}Dashboard{% endblock %}
+{% block header %}Painel de Controle{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<style>
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #4a90e2;
+  }
+
+  .card p {
+    margin: 5px 0 0;
+    color: #666;
+  }
+
+  .agenda-section {
+    margin-top: 30px;
+  }
+
+  .agenda-section h3 {
+    margin-bottom: 10px;
+    border-left: 4px solid #4a90e2;
+    padding-left: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
+  th {
+    background: #f4f4f4;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<p>Bem-vindo, {{ session.get('user') }}!</p>
+<div class="dashboard">
+  <div class="card">
+    <h2>{{ total_clients or 0 }}</h2>
+    <p>Clientes cadastrados</p>
+  </div>
 
-<ul>
-  <li><strong>Total de clientes:</strong> {{ clients_count }}</li>
-  <li><strong>Total de agendamentos:</strong> {{ sched_count }}</li>
-</ul>
+  <div class="card">
+    <h2>{{ today_schedules or 0 }}</h2>
+    <p>Agendamentos de hoje</p>
+  </div>
 
-<h2>Serviços cadastrados</h2>
-<table>
-  <thead>
-    <tr><th>Serviço</th><th>Preço (R$)</th><th>Custo (R$)</th></tr>
-  </thead>
-  <tbody>
-    {% for service in services %}
-    <tr>
-      <td>{{ service.name }}</td>
-      <td>{{ "%.2f"|format(service.price) }}</td>
-      <td>{{ "%.2f"|format(service.cost) }}</td>
-    </tr>
-    {% else %}
-    <tr><td colspan="3">Nenhum serviço cadastrado</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="card">
+    <h2>{{ total_services or 0 }}</h2>
+    <p>Serviços cadastrados</p>
+  </div>
+
+  <div class="card">
+    <h2>{{ total_users or 0 }}</h2>
+    <p>Usuários no sistema</p>
+  </div>
+
+  <div class="card">
+    <h2>R$ {{ total_revenue or "0,00" }}</h2>
+    <p>Receita do mês</p>
+  </div>
+</div>
+
+<div class="agenda-section">
+  <h3>Próximos Agendamentos</h3>
+  {% if upcoming_schedules %}
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Serviço</th>
+          <th>Data</th>
+          <th>Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for schedule in upcoming_schedules %}
+        <tr>
+          <td>{{ schedule.client_name }}</td>
+          <td>{{ schedule.service_name }}</td>
+          <td>{{ schedule.date }}</td>
+          <td>{{ schedule.time }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Nenhum agendamento futuro.</p>
+  {% endif %}
+</div>
 {% endblock %}

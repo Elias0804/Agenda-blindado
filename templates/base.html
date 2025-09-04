@@ -3,56 +3,58 @@
 <head>
   <meta charset="utf-8">
   <title>{% block title %}Agenda de Salão{% endblock %}</title>
-  
-  <!-- CSS estático padrão -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  
+
+  <!-- CSS padrão -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
   {% block extra_css %}{% endblock %}
-  
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; padding: 1rem; }
-    input, select, textarea { display: block; margin: .5rem 0 1rem; padding: .5rem; width: 100%; max-width: 400px; }
-    label { font-weight: bold; }
-    nav a { margin-right: 1rem; }
-    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
-    th, td { border: 1px solid #ddd; padding: .5rem; }
-    .flash { color: darkred; }
-  </style>
 </head>
 <body>
-  <header>
-    <nav>
-      {% if session.get('user') %}
-        <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('clients.clients') }}">Clientes</a>
-        <a href="{{ url_for('schedules.schedule') }}">Agendamentos</a>
-        <a href="{{ url_for('services.prices') }}">Preços</a>
-        <a href="{{ url_for('export.export_excel') }}">Exportar planilha</a>
-        <a href="{{ url_for('auth.list_users') }}">Usuários</a>
-        <a href="{{ url_for('auth.logout') }}">Sair ({{ session.get('user') }})</a>
-      {% else %}
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.register') }}">Cadastrar</a>
-      {% endif %}
-    </nav>
-    <h1>{% block header %}Agenda de Salão{% endblock %}</h1>
-  </header>
+  <div class="container">
+    <!-- Menu lateral / Sidebar -->
+    <aside class="sidebar">
+      <h2>Agenda de Salão</h2>
+      <nav>
+        {% if session.get('user') %}
+          <a href="{{ url_for('auth.dashboard') }}">Painel de Controle</a>
+          <a href="{{ url_for('clients.clients') }}">Cadastro cliente</a>
+          <a href="{{ url_for('professionals.professionals') }}">Cadastro Profissional</a>
+          <a href="{{ url_for('schedules.schedule') }}">Agendamentos</a>
+          <a href="{{ url_for('services.services') }}">Gerenciamento de Serviços</a>
+          <a href="{{ url_for('finance_bp.summary') }}">Painel Financeiro</a>
+          <a href="{{ url_for('inventory.add_item') }}">Cadastro Estoque</a>
+          <a href="{{ url_for('auth.list_users') }}">Usuários</a>
+          <a href="{{ url_for('auth.logout') }}">Sair ({{ session.get('user') }})</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Login</a>
+          <a href="{{ url_for('auth.register') }}">Cadastrar</a>
+        {% endif %}
+      </nav>
+    </aside>
 
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="flash">
-        {% for m in messages %}{{ m }}<br>{% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+      <header>
+        <h1>{% block header %}Agenda de Salão{% endblock %}</h1>
+      </header>
 
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Conteúdo específico de cada página -->
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 
   <footer>
-    <p>&copy; {{ 2025 }} Agenda de Salão</p>
+    <p>Agenda App &copy; 2025</p>
   </footer>
 </body>
 </html>

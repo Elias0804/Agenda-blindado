@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Estoque - Agenda{% endblock %}
+{% block header %}Gerenciar Estoque{% endblock %}
+
+{% block content %}
+<div class="inventory">
+
+  <!-- Botão para adicionar novo produto -->
+  <a href="{{ url_for('inventory.add_item') }}" class="btn">+ Novo Produto</a>
+
+  <!-- Formulário de upload de Excel -->
+  <form action="{{ url_for('inventory.upload_excel') }}" method="post" enctype="multipart/form-data" style="margin-top:20px;">
+    <label for="excel_file">Importar Planilha de Estoque:</label>
+    <input type="file" name="excel_file" id="excel_file" accept=".xlsx,.csv" required>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <table style="margin-top:20px;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Produto</th>
+        <th>Categoria</th>
+        <th>Quantidade</th>
+        <th>Preço Unitário</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>R$ {{ "%.2f"|format(item.unit_price) }}</td>
+        <td>
+          {% if item.quantity <= 5 %}
+            <span style="color: red; font-weight: bold;">Estoque Baixo</span>
+          {% else %}
+            <span style="color: green;">Disponível</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('inventory.edit_item', item_id=item.id) }}">Editar</a> |
+          <form action="{{ url_for('inventory.delete_item', item_id=item.id) }}" method="post" style="display:inline;">
+            <button type="submit" onclick="return confirm('Deseja excluir este produto?')">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if not items %}
+  <p>Nenhum produto cadastrado no estoque.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

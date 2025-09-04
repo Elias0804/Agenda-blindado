@@ -1,10 +1,10 @@
 from flask import Blueprint, request, redirect, url_for, session, render_template, flash
 from db import get_db
 
-services_bp = Blueprint('services', __name__, url_prefix='/prices')
+services_bp = Blueprint('services', __name__, url_prefix='/services')
 
 @services_bp.route('/', methods=['GET','POST'])
-def prices():
+def services():
     if not session.get('user'):
         return redirect(url_for('auth.login'))
     conn = get_db()
@@ -27,4 +27,4 @@ def prices():
     cur.execute('SELECT * FROM services')
     services = cur.fetchall()
     conn.close()
-    return render_template('prices.html', services=services)
+    return render_template('services.html', services=services)
