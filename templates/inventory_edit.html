@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Produto{% endblock %}
+
+{% block content %}
+<h2>Editar Produto</h2>
+
+<form action="{{ url_for('inventory.edit_item', item_id=item.id) }}" method="post">
+    <div class="form-group">
+        <label for="name">Nome do Produto:</label>
+        <input type="text" id="name" name="name" value="{{ item['name'] }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="category">Categoria:</label>
+        <input type="text" id="category" name="category" value="{{ item['category'] }}">
+    </div>
+
+    <div class="form-group">
+        <label for="quantity">Quantidade:</label>
+        <input type="number" id="quantity" name="quantity" value="{{ item['quantity'] }}" min="0" required>
+    </div>
+
+    <div class="form-group">
+        <label for="usage_per_service">Uso por Serviço:</label>
+        <input type="number" id="usage_per_service" name="usage_per_service" value="{{ item['usage_per_service'] }}" min="0" required>
+    </div>
+
+    <div class="form-group">
+        <label for="unit_price">Preço Unitário:</label>
+        <input type="number" id="unit_price" name="unit_price" value="{{ item['unit_price'] }}" step="0.01" min="0">
+    </div>
+
+    <button type="submit" class="btn">Salvar Alterações</button>
+    <a href="{{ url_for('inventory.inventory') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

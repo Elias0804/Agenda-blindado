@@ -1,0 +1,28 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+
+# Banco de dados
+*.db
+*.db-journal
+*.db.bak
+user_dbs/
+
+# Variáveis de ambiente
+.env
+
+# VS Code
+.vscode/
+
+# Expo
+.expo/
+
+# Uploads
+uploads/
+
+# Logs
+*.log

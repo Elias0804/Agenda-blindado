@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Profissional{% endblock %}
+{% block header %}Editar Profissional{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/professionals.css') }}">
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <input type="hidden" name="form_type" value="edit_professional">
+
+  <label for="prof_name">Nome</label>
+  <input type="text" name="name" id="prof_name" value="{{ prof.name }}" required />
+
+  <label for="prof_phone">Telefone</label>
+  <input type="text" name="phone" id="prof_phone" value="{{ prof.phone }}" />
+
+  <label for="specialty">Especialidade</label>
+  <input type="text" name="specialty" id="specialty" value="{{ prof.specialty }}" />
+
+  <label for="prof_cpf">CPF</label>
+  <input type="text" name="cpf" id="prof_cpf" value="{{ prof.cpf }}" placeholder="000.000.000-00" />
+
+  <label for="prof_cnpj">CNPJ</label>
+  <input type="text" name="cnpj" id="prof_cnpj" value="{{ prof.cnpj }}" placeholder="00.000.000/0000-00" />
+
+  <button type="submit">Salvar Alterações</button>
+</form>
+{% endblock %}

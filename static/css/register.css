@@ -1,0 +1,33 @@
+.register-page {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.register-card {
+  width: 500px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 20px rgba(0,0,0,0.1);
+}
+
+.register-card input,
+.register-card select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background: #6A4BFF;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Emitir NF - {{ prof.name }}{% endblock %}
+{% block header %}Emitir Nota Fiscal{% endblock %}
+
+{% block content %}
+<form method="post">
+  <label>Profissional</label>
+  <input type="text" value="{{ prof.name }}" disabled>
+
+  <label>Número da NF</label>
+  <input type="text" name="numero" required>
+
+  <label>Valor</label>
+  <input type="number" step="0.01" name="valor" required>
+
+  <label>Data de emissão</label>
+  <input type="date" name="data_emissao" value="{{ today }}">
+
+  <button type="submit">Emitir NF</button>
+</form>
+{% endblock %}

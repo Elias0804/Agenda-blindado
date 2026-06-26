@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Profissionais - Agenda{% endblock %}
+{% block header %}Cadastro de Profissionais{% endblock %}
+
+{% block content %}
+<form method="post">
+  <input type="hidden" name="form_type" value="professionals">
+
+  <label>Nome</label>
+  <input type="text" name="name" required>
+
+  <label>Telefone</label>
+  <input type="text" name="phone">
+
+  <label>Especialidade</label>
+  <input type="text" name="specialty">
+
+  <label>CPF</label>
+  <input type="text" name="cpf">
+
+  <label>CNPJ</label>
+  <input type="text" name="cnpj">
+
+  <button type="submit">Cadastrar Profissional</button>
+</form>
+
+<h3>Profissionais cadastrados</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Telefone</th>
+      <th>Especialidade</th>
+      <th>CPF</th>
+      <th>CNPJ</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for prof in all_pros %}
+    <tr>
+      <td>{{ prof.name }}</td>
+      <td>{{ prof.phone }}</td>
+      <td>{{ prof.specialty }}</td>
+      <td>{{ prof.cpf }}</td>
+      <td>{{ prof.cnpj }}</td>
+      <td>
+        <a href="{{ url_for('professionals.delete_professionals', prof_id=prof.id) }}" class="btn-delete" onclick="return confirm('Deseja realmente excluir este profissional?');">Excluir</a>
+        <a href="{{ url_for('professionals.edit_professionals', prof_id=prof.id) }}">Editar</a> |
+        <a href="{{ url_for('professionals.emitir_nf', prof_id=prof.id) }}">Emitir NF</a>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">Nenhum profissional cadastrado</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h3>Notas Fiscais Emitidas</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Número</th>
+      <th>Profissional</th>
+      <th>Data</th>
+      <th>Valor</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for nf in notas %}
+    <tr>
+      <td>{{ nf.numero }}</td>
+      <td>{{ nf.prof_name }}</td>
+      <td>{{ nf.data_emissao }}</td>
+      <td>{{ nf.valor }}</td>
+      <td>
+        <a href="{{ url_for('professionals.ver_nf', nf_id=nf.id) }}">Ver NF</a>
+        {% if nf.arquivo_pdf %}
+         | <a href="{{ url_for('static', filename=nf.arquivo_pdf) }}" target="_blank">Baixar PDF</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">Nenhuma nota fiscal emitida</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

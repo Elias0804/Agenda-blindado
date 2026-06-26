@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}NF {{ nf.numero }}{% endblock %}
+{% block header %}Detalhes da Nota Fiscal{% endblock %}
+
+{% block content %}
+<p><strong>Número:</strong> {{ nf.numero }}</p>
+<p><strong>Profissional:</strong> {{ nf.prof_name }}</p>
+<p><strong>Data:</strong> {{ nf.data_emissao }}</p>
+<p><strong>Valor:</strong> R$ {{ nf.valor }}</p>
+{% if nf.arquivo_pdf %}
+<p><a href="{{ url_for('static', filename=nf.arquivo_pdf.split('static/')[1]) }}" target="_blank">Baixar PDF</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Serviços & Promoções - Salão{% endblock %}
+{% block header %}Gerenciar Serviços do Salão{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 14px; }
+  .section { margin-bottom: 20px; }
+  .form-group { margin-bottom: 10px; }
+  .form-group label { font-weight: bold; display:block; margin-bottom:4px; }
+  .form-group input, .form-group select { width:100%; padding:6px 8px; box-sizing:border-box; }
+
+  button.btn { padding:7px 12px; border-radius:4px; border:none; cursor:pointer; color:#fff; background:#0d6efd; }
+  .btn-update { background:#28a745; }
+  .btn-delete { background:#dc3545; }
+  .btn-clear { background:#6c757d; }
+
+  .product-chip { display:inline-block; background:#eee; padding:3px 8px; border-radius:12px; margin:2px; font-size:0.85em; }
+
+  .products-qty { margin-top:8px; display:flex; flex-wrap:wrap; gap:8px; }
+  .qty-row { display:none; align-items:center; gap:6px; }
+  .qty-row label { font-size:0.9em; }
+
+  table { width:100%; border-collapse:collapse; font-size:0.95em; margin-top:12px; }
+  th, td { border:1px solid #ddd; padding:6px 8px; text-align:left; }
+  th { background:#f7f7f7; }
+  .promotion-row { background:#fff7cc; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h3>Adicionar Novo Serviço</h3>
+  <form method="post" class="service-form">
+    <div class="form-group">
+      <label for="name">Nome do Serviço</label>
+      <input type="text" name="name" id="name" placeholder="Digite o nome do serviço" required>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Preço (R$)</label>
+      <input type="number" step="0.01" name="price" id="price" placeholder="0.00" required>
+    </div>
+
+    <div class="form-group">
+      <label for="duration">Duração (minutos)</label>
+      <input type="number" name="duration" id="duration" placeholder="0" required>
+    </div>
+
+    <div class="form-group">
+      <label for="avg_quantity">Quantidade Média (opcional)</label>
+      <input type="number" step="0.01" name="avg_quantity" id="avg_quantity" placeholder="0" min="0">
+    </div>
+
+    <div class="form-group">
+      <label for="products_ids">Produtos usados no serviço <small>(selecione 1+)</small></label>
+      <select name="products_ids" id="products_ids" multiple size="6" required>
+        {% for item in inventory_items %}
+          <option value="{{ item.id }}">{{ item.name }} (Estoque: {{ item.quantity }})</option>
+        {% endfor %}
+      </select>
+
+      <div class="products-qty" id="products_qty_container">
+        {% for item in inventory_items %}
+        <div class="qty-row" id="qty_row_{{ item.id }}" data-pid="{{ item.id }}">
+          <label for="products_qty_{{ item.id }}">{{ item.name }} — Qtd usada:</label>
+          <input type="number" name="products_qty_{{ item.id }}" id="products_qty_{{ item.id }}" min="0" step="0.01" style="width:90px;" placeholder="ex:1">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <button type="submit" name="add" class="btn">Adicionar Serviço</button>
+  </form>
+</div>
+
+<div class="section">
+  <h3>Serviços Cadastrados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Preço (R$)</th>
+        <th>Duração (min)</th>
+        <th>Qtd Média</th>
+        <th>Produtos usados</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in services %}
+      <tr {% if s.get('promotion') %}class="promotion-row"{% endif %}>
+        <form method="post" class="inline-form">
+          <td><input type="text" name="name" value="{{ s.get('name') }}" required></td>
+          <td><input type="number" step="0.01" name="price" value="{{ '%.2f'|format(s.get('price') or 0) }}" required></td>
+          <td><input type="number" name="duration" value="{{ s.get('duration') }}" required></td>
+          <td><input type="number" step="0.01" name="avg_quantity" value="{{ s.get('avg_quantity') or 0 }}" min="0"></td>
+          <td>
+            {% set prods = service_products.get(s.get('id'), []) %}
+            {% if prods %}
+              {% for p in prods %}
+                <span class="product-chip">{{ p.name }}{% if p.quantity is not none %} ({{ p.quantity }}){% endif %}</span>
+              {% endfor %}
+            {% else %}
+              Nenhum
+            {% endif %}
+          </td>
+          <td>
+            <input type="hidden" name="service_id" value="{{ s.get('id') }}">
+            <button type="submit" name="update" class="btn btn-update">Salvar</button>
+        </form>
+
+        <form method="post" class="inline-form" onsubmit="return confirm('Deseja excluir este serviço?')">
+          <input type="hidden" name="service_id" value="{{ s.get('id') }}">
+          <button type="submit" name="delete" class="btn btn-delete">Excluir</button>
+        </form>
+          </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" style="text-align:center; color:#666;">Nenhum serviço cadastrado</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<form method="post" onsubmit="return confirm('Tem certeza que deseja excluir TODOS os serviços?')">
+  <button type="submit" name="clear_all" class="btn btn-clear">Excluir Todos</button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const select = document.getElementById('products_ids');
+  const qtyContainer = document.getElementById('products_qty_container');
+
+  function updateQtyVisibility() {
+    const selected = Array.from(select.selectedOptions).map(o => o.value);
+    Array.from(qtyContainer.querySelectorAll('.qty-row')).forEach(row => {
+      const pid = row.dataset.pid;
+      const input = row.querySelector('input');
+      if (selected.includes(pid)) {
+        row.style.display = 'flex';
+        input.required = true;
+      } else {
+        row.style.display = 'none';
+        input.required = false;
+        input.value = '';
+      }
+    });
+  }
+
+  // init + listener
+  updateQtyVisibility();
+  select.addEventListener('change', updateQtyVisibility);
+});
+</script>
+{% endblock %}

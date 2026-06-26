@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Erro - Agenda{% endblock %}
+{% block header %}Ops, algo deu errado...{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <h2>Código do erro: {{ error_code }}</h2>
+  <p>{{ error_message }}</p>
+  <a href="{{ url_for('auth.login') }}" class="btn">Voltar ao Login</a>
+  <a href="{{ url_for('dashboard') }}" class="btn">Ir ao Painel</a>
+</div>
+{% endblock %}

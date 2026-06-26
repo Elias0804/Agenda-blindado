@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Agenda de Salão{% endblock %}</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="layout">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar">
+      <h2>💇‍♀️ Agenda de Salão</h2>
+      <nav>
+        {% if session.get('user') %}
+          <a href="{{ url_for('auth.dashboard') }}">🏠 Painel</a>
+          <a href="{{ url_for('clients.clients') }}">👥 Clientes</a>
+          <a href="{{ url_for('schedule.schedule') }}">🗓️ Agendamentos</a>
+          <a href="{{ url_for('services.services') }}">💅 Serviços</a>
+
+          {% if session.get('is_admin') %}
+            <a href="{{ url_for('auth.list_users') }}">⚙️ Usuários</a>
+          {% endif %}
+
+          <hr>
+          <a href="{{ url_for('auth.logout') }}">🚪 Sair ({{ session.get('user') }})</a>
+
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">🔐 Login</a>
+          <a href="{{ url_for('auth.register') }}">📝 Cadastrar</a>
+        {% endif %}
+      </nav>
+    </aside>
+
+    <!-- ===== Conteúdo principal ===== -->
+    <main class="main-content">
+      <header class="main-header">
+        <button id="toggleSidebar" class="menu-toggle">☰</button>
+        <h1>{% block header %}Agenda de Salão{% endblock %}</h1>
+
+        {% if session.get('user') %}
+          <div class="user-info">
+            <span>👤 {{ session.get('user') }}</span>
+          </div>
+        {% endif %}
+      </header>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <section class="page-content">
+        {% block content %}{% endblock %}
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p>Agenda App &copy; 2025 | Desenvolvido por Elias</p>
+  </footer>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.querySelector('.sidebar');
+    toggleBtn?.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+  </script>
+
+</body>
+</html>

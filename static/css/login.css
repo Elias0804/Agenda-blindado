@@ -1,0 +1,50 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.login-card {
+  width: 360px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 3px 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: #6A4BFF;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.divider {
+  margin: 20px 0;
+  position: relative;
+  text-align: center;
+}
+
+.google-login-btn {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}

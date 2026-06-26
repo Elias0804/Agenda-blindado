@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro - Agenda{% endblock %}
+{% block header %}Criar Conta{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="register-page">
+
+  <div class="register-card">
+
+    <h2>Criar Conta de Colaborador</h2>
+    <p class="subtitle">Complete seus dados para acessar o sistema</p>
+
+    <form action="{{ url_for('auth.register') }}" method="POST">
+
+      <h3>Dados Pessoais</h3>
+      <input type="text" name="name" placeholder="Nome Completo" required>
+      <input type="text" name="cpf" placeholder="CPF" required>
+      <input type="text" name="phone" placeholder="Telefone / WhatsApp" required>
+
+      <h3>Dados de Trabalho</h3>
+      <select name="role" required>
+        <option value="">Selecione a função</option>
+        <option>Cabeleireiro(a)</option>
+        <option>Barbeiro(a)</option>
+        <option>Manicure / Pedicure</option>
+        <option>Massoterapeuta</option>
+        <option>Designer de Sobrancelhas</option>
+        <option>Recepção</option>
+      </select>
+
+      <select name="type" required>
+        <option value="">Tipo de Vínculo</option>
+        <option>Cooperado</option>
+        <option>Funcionário</option>
+        <option>Freelancer</option>
+      </select>
+
+      <input type="number" name="commission" placeholder="Comissão (%)">
+
+      <h3>Dados para Nota Fiscal</h3>
+      <input type="text" name="cnpj" placeholder="CNPJ (se MEI)">
+      <input type="text" name="razao" placeholder="Razão Social">
+      <input type="text" name="inscricao" placeholder="Inscrição Municipal">
+      <input type="text" name="endereco" placeholder="Endereço Completo">
+      <input type="email" name="email_nf" placeholder="E-mail para Nota Fiscal">
+
+      <h3>Acesso ao Sistema</h3>
+      <input type="email" name="email" placeholder="E-mail de Login" required>
+      <input type="password" name="password" placeholder="Criar Senha" required>
+
+      <button type="submit">Criar Conta</button>
+    </form>
+
+    <p class="login-text">
+      Já possui conta?  
+      <a href="{{ url_for('auth.login') }}">Entrar</a>
+    </p>
+
+  </div>
+
+</div>
+{% endblock %}

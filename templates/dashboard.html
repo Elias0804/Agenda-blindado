@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}Painel de Controle - Agenda de Salão{% endblock %}
+{% block header %}Painel de Controle{% endblock %}
+
+{% block content %}
+<style>
+/* ==============================
+   ESTILO MODERNO DO DASHBOARD
+   ============================== */
+
+/* ===== Reset ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+/* ===== Cores e Tema ===== */
+:root {
+  --bg: #f6f8fb;
+  --card-bg: #fff;
+  --text-dark: #2d3436;
+  --text-light: #636e72;
+  --primary: #3b82f6;
+  --primary-light: #e0ebff;
+  --accent: #60a5fa;
+  --shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Corpo ===== */
+body {
+  background: var(--bg);
+  color: var(--text-dark);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ===== Dashboard Grid ===== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
+}
+
+/* ===== Card ===== */
+.card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 6px 20px var(--shadow);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(59,130,246,0.15);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 70%);
+  transform: rotate(25deg);
+}
+
+.card h2 {
+  font-size: 2.4rem;
+  color: var(--primary);
+  margin-bottom: 8px;
+  z-index: 1;
+  position: relative;
+}
+
+.card p {
+  color: var(--text-light);
+  font-size: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Ícones dos Atalhos ===== */
+.shortcuts .card h2 {
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 10px rgba(59,130,246,0.3);
+}
+
+/* ===== Seções ===== */
+.section {
+  margin-top: 50px;
+}
+
+.section h3 {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3::before {
+  content: "";
+  width: 6px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+/* ===== Tabelas ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+table thead {
+  background: var(--primary);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+table th, table td {
+  padding: 14px 10px;
+  text-align: center;
+}
+
+table tbody tr {
+  transition: background 0.2s ease;
+}
+
+table tbody tr:nth-child(even) {
+  background: #f9fbff;
+}
+
+table tbody tr:hover {
+  background: var(--primary-light);
+}
+
+/* ===== Nenhum Dado ===== */
+.no-data {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 500px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Modo Escuro ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111827;
+    --card-bg: #1f2937;
+    --text-dark: #f3f4f6;
+    --text-light: #9ca3af;
+    --primary: #3b82f6;
+    --primary-light: rgba(59,130,246,0.1);
+    --shadow: rgba(0, 0, 0, 0.3);
+  }
+
+  body {
+    background: var(--bg);
+  }
+
+  table thead {
+    background: var(--primary);
+  }
+
+  .card {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  }
+
+  .card:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  }
+}
+</style>
+
+<section class="dashboard-grid">
+  <article class="card">
+    <h2>{{ total_clients }}</h2>
+    <p>Clientes Cadastrados</p>
+  </article>
+
+  <article class="card">
+    <h2>{{ today_schedule }}</h2>
+    <p>Agendamentos de Hoje</p>
+  </article>
+
+  <article class="card">
+    <h2>{{ total_services }}</h2>
+    <p>Serviços Cadastrados</p>
+  </article>
+
+  <article class="card">
+    <h2>{{ total_users }}</h2>
+    <p>Usuários no Sistema</p>
+  </article>
+
+  <article class="card">
+    <h2>R$ {{ total_revenue }}</h2>
+    <p>Receita do Mês</p>
+  </article>
+</section>
+
+<section class="section">
+  <h3>📅 Próximos Agendamentos</h3>
+  {% if upcoming_schedule %}
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Serviço</th>
+          <th>Data</th>
+          <th>Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sched in upcoming_schedule %}
+        <tr>
+          <td>{{ sched.client_name }}</td>
+          <td>{{ sched.service_name }}</td>
+          <td>{{ sched.date }}</td>
+          <td>{{ sched.time }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="no-data">Nenhum agendamento futuro.</p>
+  {% endif %}
+</section>
+
+<section class="section shortcuts">
+  <h3>⚡ Atalhos Rápidos</h3>
+  <div class="dashboard-grid">
+    <a href="{{ url_for('clients.clients') }}" class="card">
+      <h2>👥</h2><p>Clientes</p>
+    </a>
+    <a href="{{ url_for('professionals.professionals') }}" class="card">
+      <h2>💼</h2><p>Profissionais</p>
+    </a>
+    <a href="{{ url_for('services.services') }}" class="card">
+      <h2>✂️</h2><p>Serviços</p>
+    </a>
+    <a href="{{ url_for('inventory.inventory') }}" class="card">
+      <h2>📦</h2><p>Estoque</p>
+    </a>
+    <a href="{{ url_for('schedule.schedule') }}" class="card">
+      <h2>📅</h2><p>Agenda</p>
+    </a>
+    <a href="{{ url_for('finance.finance') }}" class="card">
+      <h2>💰</h2><p>Financeiro</p>
+    </a>
+    <a href="{{ url_for('reports.index') }}" class="card">
+      <h2>📑</h2><p>Relatórios</p>
+    </a>
+    <a href="{{ url_for('admin.admin_users') }}" class="card">
+      <h2>⚙️</h2><p>Usuários</p>
+    </a>
+  </div>
+</section>
+{% endblock %}

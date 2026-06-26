@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Agendamento{% endblock %}
+
+{% block header %}Editar Agendamento{% endblock %}
+
+{% block content %}
+<section class="agendamento-form">
+  <form method="post">
+    <h2>Editar Agendamento</h2>
+
+    <label for="client_id">Cliente</label>
+    <select name="client_id" id="client_id" required>
+      {% for client in clients %}
+        <option value="{{ client.id }}" {% if client.id == sched.client_id %}selected{% endif %}>
+          {{ client.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="professional_id">Profissional</label>
+    <select name="professional_id" id="professional_id" required>
+      {% for professional in professionals %}
+        <option value="{{ professional.id }}" {% if professional.id == sched.professional_id %}selected{% endif %}>
+          {{ professional.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label>Data e Hora do Atendimento</label>
+    <div class="datetime-group">
+      <input type="date" name="date" value="{{ sched.date_time.split(' ')[0] }}" required>
+      <input type="time" name="time" value="{{ sched.date_time.split(' ')[1] }}" required>
+    </div>
+
+    <label for="service_id">Serviço</label>
+    <select name="service_id" id="service_id" required>
+      {% for service in services %}
+        <option value="{{ service.id }}" {% if service.id == sched.service_id %}selected{% endif %}>
+          {{ service.name }} - R$ {{ "%.2f"|format(service.price) }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="notes">Observações</label>
+    <textarea name="notes" id="notes">{{ sched.notes }}</textarea>
+
+    <button type="submit" class="btn-submit">Salvar Alterações</button>
+  </form>
+</section>
+{% endblock %}
