@@ -1,35 +1,66 @@
 {% extends "base.html" %}
 
 {% block title %}Login - Agenda{% endblock %}
-{% block header %}Acessar Conta{% endblock %}
+{% block header %}Entrar{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 {% endblock %}
 
 {% block content %}
 <div class="login-page">
-  <div class="login-card">
-    <h2>Bem-vindo de volta!</h2>
-    <p class="subtitle">Entre para acessar seu painel de gestão</p>
 
-    <form action="{{ url_for('auth.login') }}" method="POST">
-      <input type="text" name="username" placeholder="E-mail ou CPF" required>
-      <input type="password" name="password" placeholder="Senha" required>
-      <button type="submit">Entrar</button>
-    </form>
+    <div class="login-card">
 
-    <div class="divider"><span>ou</span></div>
+        <h2>Bem-vindo!</h2>
+        <p class="subtitle">
+            Faça login para acessar sua conta.
+        </p>
 
-    <a href="{{ url_for('auth.login_google') }}" class="google-login-btn">
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
-      Entrar com Google
-    </a>
+        <!-- Login com Google -->
+        <a href="{{ url_for('auth.login_google') }}" class="google-login-btn">
+            <i class="fab fa-google"></i>
+            Entrar com Google
+        </a>
 
-    <p class="signup-text">
-      Não tem uma conta?  
-      <a href="{{ url_for('auth.register') }}">Criar cadastro</a>
-    </p>
-  </div>
+        <div class="divider">
+            <span>ou</span>
+        </div>
+
+        <!-- Login tradicional -->
+        <form action="{{ url_for('auth.login') }}" method="POST">
+
+            <input
+                type="email"
+                name="email"
+                placeholder="E-mail"
+                autocomplete="email"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Senha"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit">
+                Entrar
+            </button>
+
+        </form>
+
+        <p class="signup-text">
+            Ainda não possui uma conta?
+            <a href="{{ url_for('auth.register') }}">
+                Criar cadastro
+            </a>
+        </p>
+
+    </div>
+
 </div>
 {% endblock %}

@@ -3,7 +3,9 @@ import sqlite3
 from flask import Flask, Blueprint, request, redirect, url_for, session, render_template, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
 
+load_dotenv()
 # --------------------- Configurações Iniciais ---------------------
 app = Flask(__name__)
 app.secret_key = "chave-super-secreta"  # troque por algo seguro em produção
@@ -22,9 +24,9 @@ def init_auth_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT UNIQUE NOT NULL,
             password TEXT,
-            name TEXT
-        )
-    """)
+            name TEXT,
+            birth_date TEXT
+        )""")
     conn.commit()
     conn.close()
 
@@ -74,7 +76,7 @@ def login():
         user = cur.fetchone()
         conn.close()
 
-        if user and check_password_hash(user["password"], password):
+        if user and user["password"] and check_password_hash(user["password"], password):
             session["user_id"] = user["id"]
             session["user_email"] = user["email"]
             init_user_db(user["id"])
@@ -91,14 +93,20 @@ def register():
         email = request.form.get("email")
         password = request.form.get("password")
         name = request.form.get("name")
+        birth_date = request.form.get("birth_date")
 
         hashed_password = generate_password_hash(password)
 
         try:
             conn = sqlite3.connect(AUTH_DB)
+            conn.row_factory = sqlite3.Row
             cur = conn.cursor()
-            cur.execute("INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
-                        (email, hashed_password, name))
+            cur.execute(
+                """
+                INSERT INTO users (email, password, name, birth_date)
+                VALUES (?, ?, ?, ?)
+                """,
+                (email, hashed_password, name, birth_date))
             conn.commit()
             conn.close()
             flash("Conta criada com sucesso! Faça login.", "success")
@@ -136,16 +144,31 @@ def logout():
     return redirect(url_for('auth.login'))
 
 # --------------------- Google OAuth ---------------------
+import json
+
+with open("agendachave.json", "r", encoding="utf-8") as f:
+    google_config = json.load(f)
+
+client_id = google_config["web"]["client_id"]
+client_secret = google_config["web"]["client_secret"]
+
 oauth = OAuth()
+
 def init_oauth(app):
     oauth.init_app(app)
+
+    print("GOOGLE_CLIENT_ID:", os.getenv("GOOGLE_CLIENT_ID"))
+    print("GOOGLE_CLIENT_SECRET:", os.getenv("GOOGLE_CLIENT_SECRET"))
+
     oauth.register(
-        name='google',
-        client_id=os.getenv("GOOGLE_CLIENT_ID"),
-        client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid email profile'}
-    )
+    name="google",
+    client_id=client_id,
+    client_secret=client_secret,
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
+    
+
 
 @auth_bp.route("/login/google")
 def login_google():
@@ -165,6 +188,7 @@ def google_callback():
     name = user_info.get('name', 'Usuário Google')
 
     conn = sqlite3.connect(AUTH_DB)
+    conn.row_factory = sqlite3.Row
     cur = conn.cursor()
     cur.execute("SELECT * FROM users WHERE email = ?", (email,))
     user = cur.fetchone()
@@ -176,9 +200,9 @@ def google_callback():
         user = cur.fetchone()
     conn.close()
 
-    session["user_id"] = user[0]
+    session["user_id"] = user["id"]
     session["user_email"] = email
-    init_user_db(user[0])
+    init_user_db(user["id"])
 
     flash(f'Bem-vindo {name}', 'success')
     return redirect(url_for('auth.dashboard'))
