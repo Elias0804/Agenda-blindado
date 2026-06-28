@@ -144,13 +144,15 @@ def logout():
     return redirect(url_for('auth.login'))
 
 # --------------------- Google OAuth ---------------------
-import json
+import os
 
-with open("agendachave.json", "r", encoding="utf-8") as f:
-    google_config = json.load(f)
+client_id = os.getenv("GOOGLE_CLIENT_ID")
+client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
-client_id = google_config["web"]["client_id"]
-client_secret = google_config["web"]["client_secret"]
+if not client_id or not client_secret:
+    raise RuntimeError(
+        "GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET não configurados."
+    )
 
 oauth = OAuth()
 
