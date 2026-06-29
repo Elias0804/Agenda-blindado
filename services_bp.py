@@ -5,6 +5,7 @@ import pandas as pd
 import os
 import sqlite3
 from werkzeug.utils import secure_filename
+from db import get_user_db
 
 services_bp = Blueprint('services', __name__, url_prefix='/services')
 
@@ -16,59 +17,7 @@ ALLOWED_EXTENSIONS = {"csv", "xlsx"}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_user_db():
-    """Retorna a conexão com o banco do usuário logado"""
-    user_id = session.get("user_id")
-    if not user_id:
-        raise RuntimeError("Usuário não autenticado")
-
-    db_path = f"agenda_{user_id}.db"
-    init_needed = not os.path.exists(db_path)
-
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    if init_needed:
-        init_user_db(conn)
-
-    return conn
-
-def init_user_db(conn):
-    """Cria tabelas no banco do usuário, se não existirem"""
-    cur = conn.cursor()
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS services (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            price REAL DEFAULT 0,
-            duration INTEGER DEFAULT 0,
-            avg_quantity REAL DEFAULT 0,
-            promotion INTEGER DEFAULT 0
-        )
-    """)
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS inventory (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            quantity REAL DEFAULT 0
-        )
-    """)
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS service_products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            service_id INTEGER NOT NULL,
-            product_id INTEGER NOT NULL,
-            quantity_used REAL DEFAULT 0,
-            FOREIGN KEY(service_id) REFERENCES services(id),
-            FOREIGN KEY(product_id) REFERENCES inventory(id)
-        )
-    """)
-
-    conn.commit()
+# uses centralized `get_user_db` and schema from `db.py`
 
 # ------------------ ROTAS ------------------
 

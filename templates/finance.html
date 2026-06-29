@@ -60,6 +60,33 @@
 
   <!-- Resumo Geral -->
   <div class="summary-box">
+      <h3>Movimentação de Financeiro</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Profissional</th>
+            <th>Serviço</th>
+            <th>Valor (R$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td>{{ row.date }}</td>
+            <td>{{ row.type }}</td>
+            <td>{{ row.professional_name or '—' }}</td>
+            <td>{{ row.service_name or '—' }}</td>
+            <td>{{ "%.2f"|format(row.amount or 0) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5">Nenhuma transação encontrada.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
     <h3>Resumo Geral</h3>
     <p>Total de serviços realizados: <strong>{{ total_summary.total_services }}</strong></p>
     <p>Receita total: <strong>R$ {{ "%.2f"|format(total_summary.total_price) }}</strong></p>

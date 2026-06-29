@@ -1,20 +1,165 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f4f4f4;
+/* ===========================
+   LAYOUT BASE - PRONTOTECH
+   =========================== */
+
+:root{
+
+    --primary:#2563eb;
+
+    --bg:#cecfd1;
+    --card:#ffffff;
+
+    --text:#1f2937;
+    --muted:#6b7280;
+
+    --border:#e5e7eb;
+
+    --shadow:0 10px 30px rgba(0,0,0,.06);
+
+    --radius:16px;
+
 }
-header {
-  background: #007bff;
-  color: white;
-  padding: 10px;
-  text-align: center;
+
+/* BODY */
+
+body{
+
+    font-family:"Inter",Arial,sans-serif;
+
+    margin:0;
+
+    background:var(--bg);
+
+    color:var(--text);
+
 }
-main {
-  padding: 20px;
+
+/* HEADER */
+
+header{
+
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+
+    color:#fff;
+
+    padding:18px 25px;
+
+    text-align:center;
+
+    font-size:1.2rem;
+
+    font-weight:700;
+
+    box-shadow:var(--shadow);
+
 }
-footer {
-  background: #eee;
-  text-align: center;
-  padding: 10px;
-  margin-top: 20px;
+
+/* MAIN */
+
+main{
+
+    padding:25px;
+
+    max-width:1200px;
+
+    margin:auto;
+
+}
+
+/* FOOTER */
+
+footer{
+
+    background:var(--card);
+
+    border-top:1px solid var(--border);
+
+    text-align:center;
+
+    padding:18px;
+
+    margin-top:30px;
+
+    color:var(--muted);
+
+    font-size:.9rem;
+
+}
+
+/* CARD BASE (EXTRA) */
+
+.card{
+
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    padding:20px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:20px;
+
+    transition:.25s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/* RESPONSIVO */
+
+@media(max-width:768px){
+
+main{
+
+    padding:15px;
+
+}
+
+header{
+
+    font-size:1rem;
+
+    padding:15px;
+
+}
+
+}
+
+/* DARK MODE */
+
+@media(prefers-color-scheme:dark){
+
+body{
+
+    background:#0f172a;
+
+    color:#f8fafc;
+
+}
+
+header{
+
+    background:#1d4ed8;
+
+}
+
+footer{
+
+    background:#1e293b;
+
+    color:#cbd5e1;
+
+}
+
+.card{
+
+    background:#1e293b;
+
+}
+
 }

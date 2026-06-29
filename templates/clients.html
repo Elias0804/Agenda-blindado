@@ -17,7 +17,7 @@
   <input type="text" name="name" id="client_name" required />
 
   <label for="phone">Telefone</label>
-  <input type="text" name="phone" id="phone" />
+  <input type="tel" name="phone" id="phone" pattern="[0-9]{11}" maxlength="11" minlength="11" placeholder="Apenas números, 11 dígitos" required />
 
   <label for="notes">Observações</label>
   <textarea name="notes" id="notes"></textarea>
@@ -38,9 +38,9 @@
   <tbody>
     {% for client in all_clients %}
     <tr>
-      <td>{{ client.name }}</td>
-      <td>{{ client.phone }}</td>
-      <td>{{ client.notes }}</td>
+      <td class="client-result">{{ client.name }}</td>
+      <td class="client-result">{{ client.phone }}</td>
+      <td class="client-result">{{ client.notes }}</td>
       <td>
         <a href="{{ url_for('clients.edit_client', client_id=client.id) }}" class="btn-edit">Editar</a>
         <a href="{{ url_for('clients.delete_client', client_id=client.id) }}" class="btn-delete" onclick="return confirm('Deseja realmente excluir este cliente?');">Excluir</a>

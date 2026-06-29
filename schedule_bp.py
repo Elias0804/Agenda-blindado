@@ -1,21 +1,11 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, send_file
-import sqlite3
 from datetime import datetime, timedelta
 import csv
 import io
 import os
+from db import get_user_db
 
 schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule")
-
-# ==================== Função para pegar DB do usuário ====================
-def get_user_db():
-    user_id = session.get("user_id")
-    if not user_id:
-        return None
-    db_path = f"agenda_{user_id}.db"
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
 
 # ==================== Listar e criar agendamentos ====================
 @schedule_bp.route("/", methods=["GET", "POST"])

@@ -1,18 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-import sqlite3
 import os
+from db import get_user_db
 
 inventory_bp = Blueprint("inventory", __name__, url_prefix="/inventory")
 
-# ==================== Função para pegar DB do usuário ====================
-def get_user_db():
-    user_id = session.get("user_id")
-    if not user_id:
-        return None
-    db_path = f"agenda_{user_id}.db"
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
+# uses centralized `get_user_db` from `db.py`
 
 # ==================== Listar produtos ====================
 @inventory_bp.route("/", methods=["GET"])

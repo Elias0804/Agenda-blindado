@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 from db import get_user_db as get_db
 
 
@@ -14,8 +14,14 @@ def clients():
 
     if request.method == "POST":
         name = request.form["name"]
-        phone = request.form["phone"]
+        phone = request.form["phone"].strip()
         notes = request.form.get("notes", None)
+
+        if not phone.isdigit() or len(phone) != 11:
+            flash("Telefone deve conter exatamente 11 dígitos numéricos.", "error")
+            cur.execute("SELECT * FROM clients")
+            all_clients = cur.fetchall()
+            return render_template("clients.html", all_clients=all_clients)
 
         cur.execute(
             "INSERT INTO clients (name, phone, notes) VALUES (?, ?, ?)",

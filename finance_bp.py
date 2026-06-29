@@ -1,17 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
-import sqlite3
+from db import get_user_db
 
 finance_bp = Blueprint("finance", __name__, url_prefix="/finance")
-
-# ==================== Função para pegar DB do usuário ====================
-def get_user_db():
-    user_id = session.get("user_id")
-    if not user_id:
-        return None
-    db_path = f"agenda_{user_id}.db"
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
 
 @finance_bp.route("/", methods=["GET"])
 def finance():
@@ -35,7 +25,7 @@ def finance():
         date_filter += " AND date(f.date) <= date(?)"
         params.append(end_date)
 
-    # Lista de entradas (serviços)
+    # Lista de entradas (serviços) filtrada por data, se houver
     rows = cur.execute(
         "SELECT f.id, f.date, f.amount, f.type, p.name as professional_name, s.name as service_name "
         "FROM finance f "
@@ -46,33 +36,49 @@ def finance():
         params
     ).fetchall()
 
-    # Resumo por profissional
-    summary_by_professional = cur.execute(
-        "SELECT p.name, COUNT(f.id) as total_services, COALESCE(SUM(f.amount), 0) as total_price "
-        "FROM finance f "
-        "LEFT JOIN professionals p ON p.id = f.professional_id "
-        "WHERE f.type='entrada' " + date_filter +
-        " GROUP BY p.id, p.name ORDER BY total_price DESC",
-        params
-    ).fetchall()
+    # Resumo para o período filtrado
+    filtered_summary = None
+    filtered_by_professional = None
+    if start_date or end_date:
+        filtered_summary = cur.execute(
+            "SELECT COUNT(*) as total_services, COALESCE(SUM(amount),0) as total_price "
+            "FROM finance f WHERE f.type='entrada'" + date_filter,
+            params
+        ).fetchone()
+        filtered_by_professional = cur.execute(
+            "SELECT p.name, COUNT(f.id) as total_services, COALESCE(SUM(f.amount), 0) as total_price "
+            "FROM finance f "
+            "LEFT JOIN professionals p ON p.id = f.professional_id "
+            "WHERE f.type='entrada' " + date_filter +
+            " GROUP BY p.id, p.name ORDER BY total_price DESC",
+            params
+        ).fetchall()
 
     # Totais gerais
     total_summary = cur.execute(
         "SELECT COUNT(*) as total_services, COALESCE(SUM(amount),0) as total_price "
-        "FROM finance WHERE type='entrada'" + (date_filter if date_filter else ""),
-        params
+        "FROM finance f WHERE f.type='entrada'",
     ).fetchone()
+
+    # Resumo geral por profissional
+    summary_by_professional = cur.execute(
+        "SELECT p.name, COUNT(f.id) as total_services, COALESCE(SUM(f.amount), 0) as total_price "
+        "FROM finance f "
+        "LEFT JOIN professionals p ON p.id = f.professional_id "
+        "WHERE f.type='entrada' "
+        "GROUP BY p.id, p.name ORDER BY total_price DESC",
+    ).fetchall()
 
     # Hoje
     daily_summary = cur.execute(
         "SELECT COUNT(*) as total_services, COALESCE(SUM(amount),0) as total_price "
-        "FROM finance WHERE type='entrada' AND date(date)=date('now')"
+        "FROM finance f WHERE f.type='entrada' AND date(f.date)=date('now')"
     ).fetchone()
 
     # Esta semana
     weekly_summary = cur.execute(
         "SELECT COUNT(*) as total_services, COALESCE(SUM(amount),0) as total_price "
-        "FROM finance WHERE type='entrada' AND strftime('%W', date)=strftime('%W', 'now')"
+        "FROM finance f WHERE f.type='entrada' AND strftime('%W', f.date)=strftime('%W', 'now')"
     ).fetchone()
 
     conn.close()
@@ -86,6 +92,6 @@ def finance():
         weekly_summary=weekly_summary,
         start_date=start_date,
         end_date=end_date,
-        filtered_summary=None,
-        filtered_by_professional=None
+        filtered_summary=filtered_summary,
+        filtered_by_professional=filtered_by_professional
     )

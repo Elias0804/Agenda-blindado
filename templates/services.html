@@ -5,29 +5,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
-<style>
-  body { font-family: Arial, sans-serif; font-size: 14px; }
-  .section { margin-bottom: 20px; }
-  .form-group { margin-bottom: 10px; }
-  .form-group label { font-weight: bold; display:block; margin-bottom:4px; }
-  .form-group input, .form-group select { width:100%; padding:6px 8px; box-sizing:border-box; }
-
-  button.btn { padding:7px 12px; border-radius:4px; border:none; cursor:pointer; color:#fff; background:#0d6efd; }
-  .btn-update { background:#28a745; }
-  .btn-delete { background:#dc3545; }
-  .btn-clear { background:#6c757d; }
-
-  .product-chip { display:inline-block; background:#eee; padding:3px 8px; border-radius:12px; margin:2px; font-size:0.85em; }
-
-  .products-qty { margin-top:8px; display:flex; flex-wrap:wrap; gap:8px; }
-  .qty-row { display:none; align-items:center; gap:6px; }
-  .qty-row label { font-size:0.9em; }
-
-  table { width:100%; border-collapse:collapse; font-size:0.95em; margin-top:12px; }
-  th, td { border:1px solid #ddd; padding:6px 8px; text-align:left; }
-  th { background:#f7f7f7; }
-  .promotion-row { background:#fff7cc; }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -54,30 +31,39 @@
       <input type="number" step="0.01" name="avg_quantity" id="avg_quantity" placeholder="0" min="0">
     </div>
 
-    <div class="form-group">
-      <label for="products_ids">Produtos usados no serviço <small>(selecione 1+)</small></label>
-      <select name="products_ids" id="products_ids" multiple size="6" required>
+    <div class="form-group full-width">
+      <label>Produtos usados no serviço <small>(marque e informe a quantidade)</small></label>
+      <div class="product-search">
+        <input type="search" id="product_search" placeholder="Pesquisar produto...">
+      </div>
+      <div class="product-list" id="product_list">
         {% for item in inventory_items %}
-          <option value="{{ item.id }}">{{ item.name }} (Estoque: {{ item.quantity }})</option>
-        {% endfor %}
-      </select>
-
-      <div class="products-qty" id="products_qty_container">
-        {% for item in inventory_items %}
-        <div class="qty-row" id="qty_row_{{ item.id }}" data-pid="{{ item.id }}">
-          <label for="products_qty_{{ item.id }}">{{ item.name }} — Qtd usada:</label>
-          <input type="number" name="products_qty_{{ item.id }}" id="products_qty_{{ item.id }}" min="0" step="0.01" style="width:90px;" placeholder="ex:1">
+        <div class="inventory-item" data-name="{{ item.name|lower }}">
+          <label class="checkbox-card">
+            <input type="checkbox" name="products_ids" value="{{ item.id }}" data-pid="{{ item.id }}">
+            <div class="item-content">
+              <span class="product-name">{{ item.name }}</span>
+              <span class="product-stock">Estoque: {{ item.quantity }}</span>
+            </div>
+          </label>
+          <div class="qty-row" id="qty_row_{{ item.id }}" data-pid="{{ item.id }}">
+            <label for="products_qty_{{ item.id }}">Qtd usada</label>
+            <input type="number" name="products_qty_{{ item.id }}" id="products_qty_{{ item.id }}" min="0" step="0.01" placeholder="0" disabled>
+          </div>
         </div>
         {% endfor %}
       </div>
     </div>
 
-    <button type="submit" name="add" class="btn">Adicionar Serviço</button>
+    <div class="form-actions full-width">
+      <button type="submit" name="add" class="btn btn-add">Adicionar Serviço</button>
+    </div>
   </form>
 </div>
 
 <div class="section">
   <h3>Serviços Cadastrados</h3>
+  <div class="table-card">
   <table>
     <thead>
       <tr>
@@ -119,13 +105,14 @@
           </td>
       </tr>
       {% else %}
-      <tr><td colspan="6" style="text-align:center; color:#666;">Nenhum serviço cadastrado</td></tr>
+      <tr><td colspan="6" class="empty-state">Nenhum serviço cadastrado</td></tr>
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 
-<form method="post" onsubmit="return confirm('Tem certeza que deseja excluir TODOS os serviços?')">
+<form method="post" class="clear-form" onsubmit="return confirm('Tem certeza que deseja excluir TODOS os serviços?')">
   <button type="submit" name="clear_all" class="btn btn-clear">Excluir Todos</button>
 </form>
 {% endblock %}
@@ -133,28 +120,40 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const select = document.getElementById('products_ids');
-  const qtyContainer = document.getElementById('products_qty_container');
+  const productSearch = document.getElementById('product_search');
+  const items = Array.from(document.querySelectorAll('.inventory-item'));
 
-  function updateQtyVisibility() {
-    const selected = Array.from(select.selectedOptions).map(o => o.value);
-    Array.from(qtyContainer.querySelectorAll('.qty-row')).forEach(row => {
-      const pid = row.dataset.pid;
-      const input = row.querySelector('input');
-      if (selected.includes(pid)) {
-        row.style.display = 'flex';
-        input.required = true;
-      } else {
-        row.style.display = 'none';
-        input.required = false;
-        input.value = '';
-      }
+  function updateQtyVisibility(checkbox) {
+    const pid = checkbox.dataset.pid;
+    const row = document.querySelector(`.qty-row[data-pid="${pid}"]`);
+    const input = row.querySelector('input');
+    if (checkbox.checked) {
+      row.style.display = 'flex';
+      input.disabled = false;
+      input.required = true;
+    } else {
+      row.style.display = 'none';
+      input.disabled = true;
+      input.required = false;
+      input.value = '';
+    }
+  }
+
+  items.forEach(item => {
+    const checkbox = item.querySelector('input[type="checkbox"]');
+    checkbox.addEventListener('change', () => updateQtyVisibility(checkbox));
+  });
+
+  function filterProducts() {
+    const query = productSearch.value.trim().toLowerCase();
+    items.forEach(item => {
+      const name = item.dataset.name || '';
+      item.style.display = name.includes(query) ? 'grid' : 'none';
     });
   }
 
-  // init + listener
-  updateQtyVisibility();
-  select.addEventListener('change', updateQtyVisibility);
+  productSearch.addEventListener('input', filterProducts);
+  filterProducts();
 });
 </script>
 {% endblock %}

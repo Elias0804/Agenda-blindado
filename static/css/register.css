@@ -1,33 +1,303 @@
-.register-page {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
+/* ===========================
+   REGISTER - PRONTOTECH
+   =========================== */
+
+:root{
+
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+
+    --bg:#0f172a;
+    --card:#111827;
+
+    --text:#f8fafc;
+    --muted:#9ca3af;
+
+    --border:rgba(255,255,255,.08);
+
+    --radius:18px;
+
+    --shadow:0 25px 60px rgba(0,0,0,.35);
+
+    --transition:.30s ease;
+
 }
 
-.register-card {
-  width: 500px;
-  padding: 30px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 3px 20px rgba(0,0,0,0.1);
+/* PAGE */
+
+.register-page{
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:30px 15px;
+
+    background:
+        radial-gradient(circle at top left,rgba(37,99,235,.25),transparent 40%),
+        radial-gradient(circle at bottom right,rgba(59,130,246,.20),transparent 35%),
+        var(--bg);
+
 }
+
+/* CARD */
+
+.register-card{
+
+    width:100%;
+
+    max-width:520px;
+
+    padding:40px;
+
+    background:rgba(17,24,39,.88);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    transition:var(--transition);
+
+}
+
+.register-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+/* TITLE */
+
+.register-card h1,
+.register-card h2{
+
+    color:var(--text);
+
+    font-size:28px;
+
+    margin-bottom:8px;
+
+    font-weight:700;
+
+}
+
+.register-card p{
+
+    color:var(--muted);
+
+    margin-bottom:25px;
+
+    line-height:1.5;
+
+}
+
+/* INPUTS */
 
 .register-card input,
-.register-card select {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.register-card select{
+
+    width:100%;
+
+    padding:14px 16px;
+
+    margin-top:12px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:#0b1220;
+
+    color:var(--text);
+
+    font-size:15px;
+
+    transition:var(--transition);
+
 }
 
-button {
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px;
-  background: #6A4BFF;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
+.register-card input::placeholder{
+
+    color:#6b7280;
+
+}
+
+.register-card input:focus,
+.register-card select:focus{
+
+    outline:none;
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+
+    transform:translateY(-1px);
+
+}
+
+/* BUTTON */
+
+button{
+
+    width:100%;
+
+    margin-top:22px;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:var(--transition);
+
+    box-shadow:0 12px 25px rgba(37,99,235,.25);
+
+}
+
+button:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+
+    box-shadow:0 18px 35px rgba(37,99,235,.35);
+
+}
+
+button:active{
+
+    transform:scale(.98);
+
+}
+
+/* DIVISOR */
+
+.divider{
+
+    margin:28px 0;
+
+    text-align:center;
+
+    position:relative;
+
+}
+
+.divider::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    top:50%;
+
+    height:1px;
+
+    background:var(--border);
+
+}
+
+.divider span{
+
+    background:var(--card);
+
+    padding:0 14px;
+
+    color:var(--muted);
+
+    font-size:12px;
+
+}
+
+/* LINKS */
+
+.register-card a{
+
+    color:var(--primary);
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+.register-card a:hover{
+
+    color:var(--primary-dark);
+
+    text-decoration:underline;
+
+}
+
+/* ALERTAS */
+
+.alert{
+
+    padding:14px;
+
+    border-radius:10px;
+
+    margin-bottom:18px;
+
+    font-size:14px;
+
+    border:1px solid var(--border);
+
+}
+
+.alert-error{
+
+    background:rgba(239,68,68,.1);
+
+    color:#f87171;
+
+}
+
+.alert-success{
+
+    background:rgba(34,197,94,.1);
+
+    color:#4ade80;
+
+}
+
+/* RESPONSIVO */
+
+@media(max-width:600px){
+
+.register-card{
+
+    padding:28px 20px;
+
+}
+
+.register-card h1,
+.register-card h2{
+
+    font-size:24px;
+
+}
+
 }

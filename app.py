@@ -4,83 +4,38 @@ from flask import Flask, Blueprint, request, redirect, url_for, session, render_
 from werkzeug.security import generate_password_hash, check_password_hash
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
+from db import AUTH_DB, init_auth_db, get_user_db, close_dbs
 
 load_dotenv()
 # --------------------- Configurações Iniciais ---------------------
 app = Flask(__name__)
 app.secret_key = "chave-super-secreta"  # troque por algo seguro em produção
-
-# Caminhos de banco de dados
-AUTH_DB = os.path.join(os.getcwd(), "auth_users.db")
-USER_DBS_DIR = os.path.join(os.getcwd(), "user_dbs")
-os.makedirs(USER_DBS_DIR, exist_ok=True)
-
-# --------------------- Banco de Usuários (Autenticação) ---------------------
-def init_auth_db():
-    conn = sqlite3.connect(AUTH_DB)
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT,
-            name TEXT,
-            birth_date TEXT
-        )""")
-    conn.commit()
-    conn.close()
-
-# --------------------- Banco de Dados por Usuário ---------------------
-def get_user_db():
-    user_id = session.get("user_id")
-    if not user_id:
-        return None
-    db_path = os.path.join(USER_DBS_DIR, f"user_{user_id}.db")
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_user_db(user_id):
-    conn = get_user_db()
-    if conn:
-        cur = conn.cursor()
-        cur.execute("""CREATE TABLE IF NOT EXISTS services (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            price REAL NOT NULL,
-            duration INTEGER NOT NULL,
-            promotion INTEGER DEFAULT 0
-        )""")
-        cur.execute("""CREATE TABLE IF NOT EXISTS clients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            phone TEXT
-        )""")
-        conn.commit()
-        conn.close()
+app.teardown_appcontext(close_dbs)
 
 # --------------------- Autenticação Blueprint ---------------------
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('user_id'):
+        return redirect(url_for('auth.dashboard'))
+
     if request.method == 'POST':
         email = request.form.get("email")
         password = request.form.get("password")
 
-        conn = sqlite3.connect(AUTH_DB)
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email = ?", (email,))
-        user = cur.fetchone()
-        conn.close()
+        with sqlite3.connect(AUTH_DB, timeout=10) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users WHERE email = ?", (email,))
+            user = cur.fetchone()
 
-        if user and user["password"] and check_password_hash(user["password"], password):
+        if user and user["password_hash"] and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
             session["user_email"] = user["email"]
-            init_user_db(user["id"])
-            flash("Login realizado com sucesso!", "success")
+            session["user"] = user["name"] or user["email"]
+            session["is_admin"] = False
+            get_user_db()
             return redirect(url_for("auth.dashboard"))
         else:
             flash("Credenciais inválidas", "error")
@@ -89,6 +44,9 @@ def login():
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    if session.get('user_id'):
+        return redirect(url_for('auth.dashboard'))
+
     if request.method == 'POST':
         email = request.form.get("email")
         password = request.form.get("password")
@@ -98,36 +56,59 @@ def register():
         hashed_password = generate_password_hash(password)
 
         try:
-            conn = sqlite3.connect(AUTH_DB)
-            conn.row_factory = sqlite3.Row
-            cur = conn.cursor()
-            cur.execute(
-                """
-                INSERT INTO users (email, password, name, birth_date)
-                VALUES (?, ?, ?, ?)
-                """,
-                (email, hashed_password, name, birth_date))
-            conn.commit()
-            conn.close()
-            flash("Conta criada com sucesso! Faça login.", "success")
-            return redirect(url_for("auth.login"))
+            with sqlite3.connect(AUTH_DB, timeout=10) as conn:
+                conn.row_factory = sqlite3.Row
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM users WHERE email = ?", (email,))
+                existing_user = cur.fetchone()
+
+                if existing_user:
+                    if existing_user["password_hash"] is None:
+                        cur.execute(
+                            "UPDATE users SET password_hash = ?, name = ?, birth_date = ? WHERE id = ?",
+                            (hashed_password, name, birth_date, existing_user["id"]))
+                        conn.commit()
+                        user_id = existing_user["id"]
+                    else:
+                        flash("E-mail já registrado. Faça login.", "error")
+                        return render_template('register.html')
+                else:
+                    cur.execute(
+                        """
+                        INSERT INTO users (email, password_hash, name, birth_date)
+                        VALUES (?, ?, ?, ?)
+                        """,
+                        (email, hashed_password, name, birth_date))
+                    user_id = cur.lastrowid
+                    conn.commit()
+
+            session["user_id"] = user_id
+            session["user_email"] = email
+            session["user"] = name or email
+            session["is_admin"] = False
+            get_user_db()
+
+            return redirect(url_for("auth.dashboard"))
         except sqlite3.IntegrityError:
-            flash("E-mail já registrado.", "error")
+            flash("E-mail já registrado. Faça login.", "error")
 
     return render_template('register.html')
 
 @auth_bp.route('/dashboard')
 def dashboard():
-    conn = get_user_db()
-    if not conn:
+    if not session.get('user_id'):
         flash('Você precisa estar logado.', 'error')
         return redirect(url_for('auth.login'))
+
+    conn = get_user_db()
 
     cur = conn.cursor()
     cur.execute('SELECT COUNT(*) AS c FROM clients')
     clients_count = cur.fetchone()['c']
     cur.execute('SELECT COUNT(*) AS c FROM services')
     services_count = cur.fetchone()['c']
+    cur.execute("SELECT COUNT(*) AS c FROM schedules WHERE date(date_time) = date('now')")
+    today_schedule = cur.fetchone()['c']
     cur.execute('SELECT * FROM services')
     services = cur.fetchall()
     conn.close()
@@ -135,6 +116,7 @@ def dashboard():
     return render_template('dashboard.html',
                            clients_count=clients_count,
                            services_count=services_count,
+                           today_schedule=today_schedule,
                            services=services)
 
 @auth_bp.route('/logout')
@@ -156,21 +138,24 @@ if not client_id or not client_secret:
 
 oauth = OAuth()
 
+import os
+
 def init_oauth(app):
     oauth.init_app(app)
 
-    print("GOOGLE_CLIENT_ID:", os.getenv("GOOGLE_CLIENT_ID"))
-    print("GOOGLE_CLIENT_SECRET:", os.getenv("GOOGLE_CLIENT_SECRET"))
+    client_id = os.getenv("GOOGLE_CLIENT_ID")
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+
+    print("GOOGLE_CLIENT_ID:", client_id)
+    print("GOOGLE_CLIENT_SECRET:", "***" if client_secret else None)
 
     oauth.register(
-    name="google",
-    client_id=client_id,
-    client_secret=client_secret,
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={"scope": "openid email profile"},
-)
-    
-
+        name="google",
+        client_id=client_id,
+        client_secret=client_secret,
+        server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+        client_kwargs={"scope": "openid email profile"},
+    )
 
 @auth_bp.route("/login/google")
 def login_google():
@@ -189,22 +174,30 @@ def google_callback():
     email = user_info.get('email')
     name = user_info.get('name', 'Usuário Google')
 
-    conn = sqlite3.connect(AUTH_DB)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE email = ?", (email,))
-    user = cur.fetchone()
+    if not email:
+        flash('E-mail do Google não foi retornado.', 'error')
+        return redirect(url_for('auth.login'))
 
-    if not user:
-        cur.execute("INSERT INTO users (email, name) VALUES (?, ?)", (email, name))
-        conn.commit()
+    with sqlite3.connect(AUTH_DB, timeout=10) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE email = ?", (email,))
         user = cur.fetchone()
-    conn.close()
+
+        if not user:
+            cur.execute(
+                "INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)",
+                (email, name, None),
+            )
+            conn.commit()
+            cur.execute("SELECT * FROM users WHERE email = ?", (email,))
+            user = cur.fetchone()
 
     session["user_id"] = user["id"]
     session["user_email"] = email
-    init_user_db(user["id"])
+    session["user"] = name
+    session["is_admin"] = False
+    get_user_db()
 
     flash(f'Bem-vindo {name}', 'success')
     return redirect(url_for('auth.dashboard'))
