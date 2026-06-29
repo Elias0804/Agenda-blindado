@@ -17,9 +17,6 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if session.get('user_id'):
-        return redirect(url_for('auth.dashboard'))
-
     if request.method == 'POST':
         email = request.form.get("email")
         password = request.form.get("password")
@@ -37,6 +34,9 @@ def login():
             session["is_admin"] = False
             get_user_db()
             return redirect(url_for("auth.dashboard"))
+        elif user and user["password_hash"] is None:
+            flash("Conta encontrada com login via Google. Complete o cadastro para criar sua senha.", "error")
+            return redirect(url_for("auth.register", email=email))
         else:
             flash("Credenciais inválidas", "error")
 
@@ -44,9 +44,7 @@ def login():
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if session.get('user_id'):
-        return redirect(url_for('auth.dashboard'))
-
+    prefill_email = request.args.get("email")
     if request.method == 'POST':
         email = request.form.get("email")
         password = request.form.get("password")
@@ -92,7 +90,7 @@ def register():
         except sqlite3.IntegrityError:
             flash("E-mail já registrado. Faça login.", "error")
 
-    return render_template('register.html')
+    return render_template('register.html', email=prefill_email)
 
 @auth_bp.route('/dashboard')
 def dashboard():
@@ -123,6 +121,12 @@ def dashboard():
 def logout():
     session.clear()
     flash('Sessão encerrada', 'success')
+    return redirect(url_for('auth.login'))
+
+@app.route('/')
+def home():
+    if session.get('user_id'):
+        return redirect(url_for('auth.login'))
     return redirect(url_for('auth.login'))
 
 # --------------------- Google OAuth ---------------------
