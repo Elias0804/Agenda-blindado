@@ -234,9 +234,9 @@ app.register_blueprint(schedule_bp)
 app.register_blueprint(finance_bp)
 
 # --------------------- Rota Inicial ---------------------
-@app.route("/")
-def home():
-    return redirect(url_for("auth.login"))
+#@app.route("/")
+#def home():
+#    return redirect(url_for("auth.login"))
 
 # --------------------- Rodar Servidor ---------------------
 if __name__ == "__main__":
