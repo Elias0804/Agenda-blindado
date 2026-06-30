@@ -60,6 +60,28 @@ form {
     max-width: 700px;
 }
 
+.professionals-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+}
+
+.professionals-form {
+    max-width: 720px;
+}
+
+.professionals-list {
+    width: 100%;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table-responsive table {
+    min-width: 720px;
+}
+
 form label {
     display: block;
     margin-top: 16px;

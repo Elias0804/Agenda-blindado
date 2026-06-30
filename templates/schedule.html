@@ -5,7 +5,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/agendamentos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/agendamento.css') }}">
 <style>
   .product-chip {
     display: inline-block;
@@ -30,44 +30,54 @@
     <h2>Novo Agendamento</h2>
 
     <!-- Cliente -->
-    <label for="client_id">Cliente</label>
-    <select name="client_id" id="client_id" required>
-      <option value="">Selecione um cliente</option>
-      {% for client in clients %}
-      <option value="{{ client.id }}">{{ client.name }}</option>
-      {% endfor %}
-    </select>
+    <div class="form-group">
+      <label for="client_id">Cliente</label>
+      <select name="client_id" id="client_id" required>
+        <option value="">Selecione um cliente</option>
+        {% for client in clients %}
+        <option value="{{ client.id }}">{{ client.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
     <!-- Profissional -->
-    <label for="professional_id">Profissional</label>
-    <select name="professional_id" id="professional_id" required>
-      <option value="">Selecione um profissional</option>
-      {% for professional in professionals %}
-      <option value="{{ professional.id }}">{{ professional.name }}</option>
-      {% endfor %}
-    </select>
+    <div class="form-group">
+      <label for="professional_id">Profissional</label>
+      <select name="professional_id" id="professional_id" required>
+        <option value="">Selecione um profissional</option>
+        {% for professional in professionals %}
+        <option value="{{ professional.id }}">{{ professional.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
     <!-- Data e Hora -->
-    <label>Data e Hora do Atendimento</label>
-    <div class="datetime-group">
-      <input type="date" name="date" required>
-      <input type="time" name="time" required>
+    <div class="form-group">
+      <label>Data e Hora do Atendimento</label>
+      <div class="datetime-group">
+        <input type="date" name="date" required>
+        <input type="time" name="time" required>
+      </div>
     </div>
 
     <!-- Serviço -->
-    <label for="service_id">Serviço</label>
-    <select name="service_id" id="service_id" required>
-      <option value="">Selecione um serviço</option>
-      {% for service in services %}
-      <option value="{{ service.id }}">
-        {{ service.name }} - R$ {{ "%.2f"|format(service.price or 0) }} ({{ service.duration }} min)
-      </option>
-      {% endfor %}
-    </select>
+    <div class="form-group">
+      <label for="service_id">Serviço</label>
+      <select name="service_id" id="service_id" required>
+        <option value="">Selecione um serviço</option>
+        {% for service in services %}
+        <option value="{{ service.id }}">
+          {{ service.name }} - R$ {{ "%.2f"|format(service.price or 0) }} ({{ service.duration }} min)
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
     <!-- Observações -->
-    <label for="notes">Observações</label>
-    <textarea name="notes" id="notes" placeholder="Digite alguma observação (opcional)"></textarea>
+    <div class="form-group">
+      <label for="notes">Observações</label>
+      <textarea name="notes" id="notes" placeholder="Digite alguma observação (opcional)"></textarea>
+    </div>
 
     <button type="submit" class="btn-submit">Agendar</button>
   </form>
@@ -89,6 +99,7 @@
     <thead>
       <tr>
         <th>Cliente</th>
+        <th>Telefone</th>
         <th>Profissional</th>
         <th>Data</th>
         <th>Hora</th>
@@ -103,15 +114,16 @@
       {% for sched in schedule %}
       <tr>
         <td>{{ sched.client_name }}</td>
+        <td>{{ sched.client_phone or 'Sem telefone' }}</td>
         <td>{{ sched.professional_name }}</td>
         <td>{{ sched.date_time.split(' ')[0] if sched.date_time else '' }}</td>
         <td>{{ sched.date_time.split(' ')[1] if sched.date_time else '' }}</td>
         <td>{{ sched.service_name }}</td>
         <td>{{ "%.2f"|format(sched.price or 0) }}</td>
         <td>
-            {% if service_products.get(sched.service_id) %}
-              {% for prod in service_products[sched.service_id] %}
-                <span class="product-chip">{{ prod.name }} ({{ prod.quantity }})</span>
+            {% if schedule_products.get(sched.id) %}
+              {% for prod in schedule_products[sched.id] %}
+                <span class="product-chip">{{ prod.name }} ({{ prod.quantity_used }})</span>
               {% endfor %}
             {% else %}
               Nenhum
@@ -119,6 +131,15 @@
         </td>
         <td>{{ sched.notes }}</td>
         <td>
+          {% if sched.client_phone %}
+            {% set sms_number = '+55' ~ sched.client_phone if sched.client_phone|length == 11 else sched.client_phone %}
+            {% set sms_body = "Olá " ~ sched.client_name ~ ", seu atendimento está agendado para " ~ (sched.date_time.split(' ')[0] if sched.date_time else '') ~ " às " ~ (sched.date_time.split(' ')[1] if sched.date_time else '') ~ ". Serviço: " ~ sched.service_name ~ ". Valor: R$ " ~ ('%.2f'|format(sched.price or 0)) ~ "." %}
+            {% set whatsapp_number = sms_number|replace('+','') %}
+            <a href="sms:{{ sms_number }}?body={{ sms_body|urlencode }}" class="btn-sms">Enviar SMS</a>
+            <a href="https://api.whatsapp.com/send?phone={{ whatsapp_number }}&text={{ sms_body|urlencode }}" class="btn-whatsapp" target="_blank">WhatsApp</a>
+          {% else %}
+            <span class="btn-sms disabled">Sem telefone</span>
+          {% endif %}
           <a href="{{ url_for('schedule.edit_schedule', schedule_id=sched.id) }}" class="btn-edit">Editar</a>
           <form method="post" action="{{ url_for('schedule.delete_schedule', schedule_id=sched.id) }}" style="display:inline;">
             <button type="submit" class="btn-delete" onclick="return confirm('Deseja realmente excluir este agendamento?');">Excluir</button>

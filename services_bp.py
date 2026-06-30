@@ -43,11 +43,13 @@ def services():
             name = request.form.get('name', '').strip()
             price = float(request.form.get('price') or 0)
             duration = int(request.form.get('duration') or 0)
+            category = request.form.get('category', 'Serviço').strip() or 'Serviço'
             avg_quantity = request.form.get('avg_quantity')
             avg_quantity = float(avg_quantity) if avg_quantity not in (None, '') else None
             promotion = int(request.form.get('promotion') or 0) if 'promotion' in svc_cols else None
 
             fields, values = ['name'], [name]
+            if 'category' in svc_cols: fields.append('category'); values.append(category)
             if 'price' in svc_cols: fields.append('price'); values.append(price)
             if 'duration' in svc_cols: fields.append('duration'); values.append(duration)
             if 'avg_quantity' in svc_cols: fields.append('avg_quantity'); values.append(avg_quantity or 0)

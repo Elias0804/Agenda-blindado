@@ -25,11 +25,10 @@ def professionals():
         phone = request.form.get("phone", "")
         specialty = request.form.get("specialty", "")
         cpf = request.form.get("cpf", "")
-        cnpj = request.form.get("cnpj", "")
 
         cur.execute(
-            "INSERT INTO professionals (name, phone, specialty, cpf, cnpj) VALUES (?, ?, ?, ?, ?)",
-            (name, phone, specialty, cpf, cnpj),
+            "INSERT INTO professionals (name, phone, specialty, cpf) VALUES (?, ?, ?, ?)",
+            (name, phone, specialty, cpf),
         )
         conn.commit()
         flash("Profissional cadastrado com sucesso!", "success")
@@ -39,13 +38,8 @@ def professionals():
     cur.execute("SELECT * FROM professionals")
     all_pros = cur.fetchall()
 
-    # Carregar notas fiscais do usuário logado
-    user_id = session.get("user_id")
-    cur.execute("SELECT * FROM notas_fiscais WHERE dono_id = ?", (user_id,))
-    notas = cur.fetchall()
-
     conn.close()
-    return render_template("professionals.html", all_pros=all_pros, notas=notas)
+    return render_template("professionals.html", all_pros=all_pros)
 
 
 # -------------------------------
@@ -62,11 +56,10 @@ def edit_professionals(prof_id):
         phone = request.form.get("phone", "")
         specialty = request.form.get("specialty", "")
         cpf = request.form.get("cpf", "")
-        cnpj = request.form.get("cnpj", "")
 
         cur.execute(
-            "UPDATE professionals SET name=?, phone=?, specialty=?, cpf=?, cnpj=? WHERE id=?",
-            (name, phone, specialty, cpf, cnpj, prof_id),
+            "UPDATE professionals SET name=?, phone=?, specialty=?, cpf=? WHERE id=?",
+            (name, phone, specialty, cpf, prof_id),
         )
         conn.commit()
         conn.close()

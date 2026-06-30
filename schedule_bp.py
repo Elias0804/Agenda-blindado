@@ -41,7 +41,7 @@ def schedule():
         professional_id = request.form["professional_id"]
         service_id = request.form["service_id"]
         date = request.form["date"]
-        time = request.form["time"]
+        time_value = request.form["time"]
         notes = request.form.get("notes", "")
 
         # Obter informações do serviço
@@ -54,7 +54,12 @@ def schedule():
             flash("Serviço inválido!", "error")
             return redirect(url_for("schedule.schedule"))
 
-        date_time = f"{date} {time}:00"
+        time_parts = time_value.split(":")
+        if len(time_parts) == 2:
+            normalized_time = f"{time_parts[0]}:{time_parts[1]}:00"
+        else:
+            normalized_time = ":".join(time_parts[:3])
+        date_time = f"{date} {normalized_time}"
 
         # Checar duplicidade: mesmo profissional no mesmo horário
         existing = conn.execute(
@@ -118,8 +123,8 @@ def schedule():
     if filter_date:
         schedule_data = conn.execute(
             """
-            SELECT s.id, c.name AS client_name, p.name AS professional_name,
-                   s.date_time, sv.name AS service_name, sv.price, s.notes
+            SELECT s.id, c.name AS client_name, c.phone AS client_phone, p.name AS professional_name,
+                   s.date_time, sv.id AS service_id, sv.name AS service_name, sv.price, s.notes
             FROM schedules s
             JOIN clients c ON c.id = s.client_id
             JOIN professionals p ON p.id = s.professional_id
@@ -132,8 +137,8 @@ def schedule():
     else:
         schedule_data = conn.execute(
             """
-            SELECT s.id, c.name AS client_name, p.name AS professional_name,
-                   s.date_time, sv.name AS service_name, sv.price, s.notes
+            SELECT s.id, c.name AS client_name, c.phone AS client_phone, p.name AS professional_name,
+                   s.date_time, sv.id AS service_id, sv.name AS service_name, sv.price, s.notes
             FROM schedules s
             JOIN clients c ON c.id = s.client_id
             JOIN professionals p ON p.id = s.professional_id
@@ -275,10 +280,15 @@ def edit_schedule(schedule_id):
         professional_id = request.form["professional_id"]
         service_id = request.form["service_id"]
         date = request.form["date"]
-        time = request.form["time"]
+        time_value = request.form["time"]
         notes = request.form.get("notes", "")
 
-        date_time = f"{date} {time}:00"
+        time_parts = time_value.split(":")
+        if len(time_parts) == 2:
+            normalized_time = f"{time_parts[0]}:{time_parts[1]}:00"
+        else:
+            normalized_time = ":".join(time_parts[:3])
+        date_time = f"{date} {normalized_time}"
 
         cur.execute(
             """

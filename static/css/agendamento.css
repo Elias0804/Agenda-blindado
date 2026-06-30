@@ -1,10 +1,9 @@
 /* ===========================
-   AGENDAMENTO - PRONTOTECH
+   SISTEMA DE AGENDAMENTOS
    =========================== */
 
 :root{
-
-    --primary:#c2c5cc;
+    --primary:#2563eb;
     --primary-light:#eff6ff;
 
     --success:#22c55e;
@@ -24,422 +23,456 @@
     --shadow:0 10px 30px rgba(0,0,0,.06);
 
     --transition:.25s ease;
-
 }
 
-/* BODY */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* ===========================
+   BODY
+   =========================== */
 
 body{
-
-    font-family:"Inter",Arial,sans-serif;
-
+    font-family:"Inter", Arial, sans-serif;
     background:var(--bg);
-
     color:var(--text);
-
     margin:0;
-
 }
 
 /* ===========================
    FORMULÁRIO
-=========================== */
+   =========================== */
 
 .agendamento-form{
-
     background:var(--card);
-
-    padding:28px;
-
-    margin-bottom:30px;
-
+    padding:32px;
+    margin:0 auto 32px;
     border-radius:var(--radius);
-
     box-shadow:var(--shadow);
-
     transition:var(--transition);
-
+    max-width:1040px;
 }
 
 .agendamento-form:hover{
-
-    transform:translateY(-3px);
-
+    transform:translateY(-2px);
 }
 
 .agendamento-form h2{
+    margin-bottom:20px;
+    font-size:1.6rem;
+    color:#111827;
+}
 
+.agendamento-form .form-group{
+    background:#ffffff;
+    border:1px solid rgba(15,23,42,0.08);
+    border-radius:24px;
+    padding:18px 20px;
     margin-bottom:18px;
-
-    font-size:1.4rem;
-
-    color:var(--text);
-
+    box-shadow:0 12px 30px rgba(15,23,42,0.04);
 }
 
-/* LABEL */
-
-.agendamento-form label{
-
-    font-weight:600;
-
-    margin-top:10px;
-
+.agendamento-form .form-group label{
     display:block;
-
-    font-size:.9rem;
-
-    color:var(--muted);
-
+    margin:0 0 10px;
+    font-weight:700;
+    font-size:.95rem;
+    color:#334155;
 }
-
-/* INPUTS */
 
 .agendamento-form input,
 .agendamento-form select,
 .agendamento-form textarea{
-
     width:100%;
-
-    padding:12px 14px;
-
-    margin-top:6px;
-
-    margin-bottom:14px;
-
-    border-radius:12px;
-
-    border:1px solid var(--border);
-
+    padding:14px 16px;
+    margin:0;
+    border-radius:18px;
+    border:1px solid #d1d5db;
     font-size:15px;
-
     transition:var(--transition);
+    background:#f8fafc;
+    color:#0f172a;
+}
 
-    background:#fff;
-
+.agendamento-form select,
+.agendamento-form textarea{
+    appearance:none;
 }
 
 .agendamento-form input:focus,
 .agendamento-form select:focus,
 .agendamento-form textarea:focus{
-
     outline:none;
-
     border-color:var(--primary);
-
-    box-shadow:0 0 0 4px rgba(37,99,235,.12);
-
+    box-shadow:0 0 0 5px rgba(37,99,235,.12);
 }
 
-/* BOTÃO */
+.agendamento-form textarea{
+    min-height:152px;
+    padding-top:16px;
+}
+
+.datetime-group{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(220px,1fr));
+    gap:18px;
+}
 
 .agendamento-form button{
-
     width:100%;
-
-    padding:14px;
-
+    padding:16px 20px;
     border:none;
-
-    border-radius:12px;
-
-    background:var(--primary);
-
+    border-radius:20px;
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
     color:#fff;
-
-    font-weight:600;
-
+    font-weight:800;
     cursor:pointer;
-
+    letter-spacing:.45px;
+    box-shadow:0 20px 50px rgba(37,99,235,.20);
     transition:var(--transition);
-
 }
 
 .agendamento-form button:hover{
-
-    background:#1d4ed8;
-
-    transform:translateY(-2px);
-
-}
-
-/* ===========================
-   DATA E HORA
-=========================== */
-
-.datetime-group{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:12px;
-
+    background:linear-gradient(135deg,#1d4ed8,#2563eb);
+    transform:translateY(-1px);
+    box-shadow:0 22px 55px rgba(37,99,235,.24);
 }
 
 /* ===========================
    TABELA
-=========================== */
+   =========================== */
 
 .agendamentos-tabela{
-
-    background:var(--card);
-
-    border-radius:var(--radius);
-
-    overflow:hidden;
-
+    background:rgba(255,255,255,0.98);
+    border-radius:28px;
+    padding:24px;
     box-shadow:var(--shadow);
+    margin-bottom:32px;
+    overflow-x:auto;
+}
 
+.agendamentos-tabela h2{
+    font-size:1.5rem;
+    color:#111827;
+    margin-bottom:16px;
+}
+
+.search-date-form{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:center;
+    margin-bottom:24px;
+}
+
+.search-date-form label{
+    color:#334155;
+    font-weight:700;
+}
+
+.search-date-form input[type="date"]{
+    padding:12px 16px;
+    border-radius:16px;
+    border:1px solid #d1d5db;
+    background:#f8fafc;
+    color:#0f172a;
+    min-width:220px;
 }
 
 .agendamentos-tabela table{
-
     width:100%;
+    border-collapse:separate;
+    border-spacing:0 12px;
+}
 
-    border-collapse:collapse;
-
+.agendamentos-tabela thead tr{
+    background:transparent;
 }
 
 .agendamentos-tabela th{
-
-    background:var(--primary);
-
-    color:#fff;
-
-    padding:14px;
-
-    font-weight:600;
-
+    background:rgba(37,99,235,0.12);
+    color:#111827;
+    padding:14px 16px;
+    font-weight:700;
     text-align:left;
-
 }
 
 .agendamentos-tabela td{
-
-    padding:14px;
-
-    border-bottom:1px solid #f1f5f9;
-
-    color:var(--muted);
-
+    padding:18px;
+    background:#f8fafc;
+    color:#334155;
+    border:none;
 }
 
 .agendamentos-tabela tbody tr{
-
     transition:var(--transition);
-
 }
 
-.agendamentos-tabela tbody tr:hover{
+.agendamentos-tabela tbody tr:hover td{
+    background:#eef4ff;
+}
 
-    background:#f8fbff;
+.agendamentos-tabela tbody tr td:first-child{
+    border-top-left-radius:18px;
+    border-bottom-left-radius:18px;
+}
 
+.agendamentos-tabela tbody tr td:last-child{
+    border-top-right-radius:18px;
+    border-bottom-right-radius:18px;
 }
 
 /* ===========================
    BOTÕES
-=========================== */
+   =========================== */
 
+.btn-filter,
+.btn-reset,
+.btn-download,
 .btn-edit,
-.btn-delete,
-.btn-download{
-
-    display:inline-block;
-
-    padding:8px 12px;
-
-    border-radius:10px;
-
-    font-size:.85rem;
-
-    font-weight:600;
-
-    color:#fff;
-
-    text-decoration:none;
-
-    transition:var(--transition);
-
-}
-
-/* EDIT */
-
-.btn-edit{
-
-    background:#3b82f6;
-
-}
-
-.btn-edit:hover{
-
-    background:#2563eb;
-
-}
-
-/* DELETE */
-
 .btn-delete{
-
-    background:var(--danger);
-
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    transition:var(--transition);
+    font-weight:700;
 }
 
-.btn-delete:hover{
-
-    background:#dc2626;
-
+.btn-filter,
+.btn-reset,
+.btn-download{
+    padding:12px 18px;
+    border-radius:14px;
+    color:#fff;
 }
 
-/* DOWNLOAD */
+.btn-filter{
+    background:#2563eb;
+}
+
+.btn-filter:hover{
+    background:#1d4ed8;
+}
+
+.btn-reset{
+    background:#475569;
+}
+
+.btn-reset:hover{
+    background:#334155;
+}
 
 .btn-download{
-
-    background:var(--warning);
-
+    background:#f59e0b;
 }
 
 .btn-download:hover{
-
     background:#d97706;
+}
 
+.btn-edit,
+.btn-delete,
+.btn-sms,
+.btn-whatsapp{
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:.85rem;
+    color:#fff;
+    border:none;
+}
+
+.btn-edit{
+    background:#3b82f6;
+}
+
+.btn-edit:hover{
+    background:#2563eb;
+}
+
+.btn-sms{
+    background:#10b981;
+}
+
+.btn-sms:hover{
+    background:#059669;
+}
+
+.btn-whatsapp{
+    background:#25d366;
+}
+
+.btn-whatsapp:hover{
+    background:#1ebe5b;
+}
+
+.btn-sms.disabled{
+    background:#64748b;
+    cursor:not-allowed;
+    opacity:.7;
+}
+
+.btn-delete{
+    background:var(--danger);
+}
+
+.btn-delete:hover{
+    background:#dc2626;
+}
+
+.download-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-top:20px;
 }
 
 /* ===========================
    RESUMOS
-=========================== */
+   =========================== */
 
 .summary-box{
-
     background:var(--card);
-
     padding:22px;
-
     margin-top:20px;
-
     border-radius:var(--radius);
-
     box-shadow:var(--shadow);
-
     transition:var(--transition);
-
     border-left:5px solid var(--primary);
-
 }
 
 .summary-box:hover{
-
     transform:translateY(-3px);
-
 }
-
-/* TÍTULO */
 
 .summary-box h3{
-
     margin-bottom:15px;
-
     font-size:1.1rem;
-
 }
 
-/* TABELA INTERNA */
-
 .summary-box table{
-
     width:100%;
-
     border-collapse:collapse;
-
 }
 
 .summary-box th{
-
     background:#f8fafc;
-
     padding:10px;
-
 }
 
 .summary-box td{
-
     padding:10px;
-
     border-bottom:1px solid #f1f5f9;
-
     color:var(--muted);
-
 }
 
 /* ===========================
-   DOWNLOAD
-=========================== */
+   DOWNLOAD SEMANAL
+   =========================== */
 
 .download-weekly{
-
     margin-top:20px;
-
 }
 
 /* ===========================
-   RESPONSIVO
-=========================== */
+   RESPONSIVIDADE
+   =========================== */
 
 @media(max-width:768px){
 
-.datetime-group{
+    .datetime-group{
+        grid-template-columns:1fr;
+    }
 
-    grid-template-columns:1fr;
+    .agendamento-form{
+        padding:20px;
+    }
 
-}
+    .search-date-form{
+        flex-direction:column;
+        align-items:stretch;
+    }
 
-.agendamento-form{
+    .search-date-form input,
+    .search-date-form button,
+    .search-date-form a{
+        width:100%;
+    }
 
-    padding:20px;
+    .download-buttons{
+        flex-direction:column;
+    }
 
-}
+    .btn-download{
+        width:100%;
+    }
 
+    .agendamentos-tabela{
+        padding:16px;
+    }
+
+    .agendamentos-tabela table{
+        min-width:700px;
+    }
 }
 
 /* ===========================
    DARK MODE
-=========================== */
+   =========================== */
 
 @media(prefers-color-scheme:dark){
 
-body{
+    body{
+        background:#0f172a;
+        color:#f8fafc;
+    }
 
-    background:#0f172a;
+    .agendamento-form,
+    .agendamentos-tabela,
+    .summary-box{
+        background:#1e293b;
+    }
 
-    color:#f8fafc;
+    .agendamento-form h2,
+    .agendamentos-tabela h2,
+    .summary-box h3{
+        color:#f8fafc;
+    }
 
-}
+    .agendamento-form label,
+    .search-date-form label{
+        color:#cbd5e1;
+    }
 
-.agendamento-form,
-.agendamentos-tabela,
-.summary-box{
+    .agendamento-form input,
+    .agendamento-form select,
+    .agendamento-form textarea,
+    .search-date-form input[type="date"]{
+        background:#0f172a;
+        border-color:#334155;
+        color:#f8fafc;
+    }
 
-    background:#1e293b;
+    .agendamentos-tabela th{
+        background:#334155;
+        color:#f8fafc;
+    }
 
-}
+    .agendamentos-tabela td,
+    .summary-box td{
+        background:#0f172a;
+        color:#cbd5e1;
+    }
 
-.agendamentos-tabela td,
-.summary-box td{
+    .agendamentos-tabela tbody tr:hover td{
+        background:#273449;
+    }
 
-    color:#cbd5e1;
-
-}
-
-.agendamentos-tabela tbody tr:hover{
-
-    background:#273449;
-
-}
-
-.summary-box th{
-
-    background:#273449;
-
-}
-
+    .summary-box th{
+        background:#273449;
+        color:#f8fafc;
+    }
 }

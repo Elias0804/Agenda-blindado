@@ -153,6 +153,8 @@ body{
 
     transition:var(--transition);
 
+    margin-bottom:18px;
+
 }
 
 .login-card input::placeholder{
