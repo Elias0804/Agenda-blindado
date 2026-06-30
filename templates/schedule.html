@@ -131,18 +131,38 @@
         </td>
         <td>{{ sched.notes }}</td>
         <td>
-          <div class="action-buttons">
-            {% if sched.client_phone %}
-              {% set sms_number = '+55' ~ sched.client_phone if sched.client_phone|length == 11 else sched.client_phone %}
-              {% set sms_body = "Olá " ~ sched.client_name ~ ", seu atendimento está agendado para " ~ (sched.date_time.split(' ')[0] if sched.date_time else '') ~ " às " ~ (sched.date_time.split(' ')[1] if sched.date_time else '') ~ ". Serviço: " ~ sched.service_name ~ ". Valor: R$ " ~ ('%.2f'|format(sched.price or 0)) ~ "." %}
-              {% set whatsapp_number = sms_number|replace('+','') %}
-              <a href="https://api.whatsapp.com/send?phone={{ whatsapp_number }}&text={{ sms_body|urlencode }}" class="btn-whatsapp" target="_blank">WhatsApp</a>
-            <a href="{{ url_for('schedule.edit_schedule', schedule_id=sched.id) }}" class="btn-edit">Editar</a>
-            <form method="post" action="{{ url_for('schedule.delete_schedule', schedule_id=sched.id) }}" class="action-form" onsubmit="return confirm('Deseja realmente excluir este agendamento?');">
-              <button type="submit" class="btn-delete">Excluir</button>
-            </form>
-          </div>
-        </td>
+    <div class="action-buttons">
+
+        {% if sched.client_phone %}
+            {% set sms_number = '+55' ~ sched.client_phone if sched.client_phone|length == 11 else sched.client_phone %}
+            {% set sms_body = "Olá " ~ sched.client_name ~ ", seu atendimento está agendado para " ~ (sched.date_time.split(' ')[0] if sched.date_time else '') ~ " às " ~ (sched.date_time.split(' ')[1] if sched.date_time else '') ~ ". Serviço: " ~ sched.service_name ~ ". Valor: R$ " ~ ('%.2f'|format(sched.price or 0)) ~ "." %}
+            {% set whatsapp_number = sms_number|replace('+','') %}
+
+            <a href="https://api.whatsapp.com/send?phone={{ whatsapp_number }}&text={{ sms_body|urlencode }}"
+               class="btn-whatsapp"
+               target="_blank">
+                WhatsApp
+            </a>
+        {% endif %}
+
+        <a href="{{ url_for('schedule.edit_schedule', schedule_id=sched.id) }}"
+           class="btn-edit">
+            Editar
+        </a>
+
+        <form method="post"
+              action="{{ url_for('schedule.delete_schedule', schedule_id=sched.id) }}"
+              class="action-form"
+              onsubmit="return confirm('Deseja realmente excluir este agendamento?');">
+
+            <button type="submit" class="btn-delete">
+                Excluir
+            </button>
+
+        </form>
+
+    </div>
+</td>
       </tr>
       {% else %}
       <tr><td colspan="9">Nenhum agendamento</td></tr>
